@@ -18,19 +18,19 @@ WAGGLE_BEEHIVE_HOST=host.docker.internal
 To start the node environment, run:
 
 ```sh
-./waggle up
+./waggle-node up
 ```
 
 To stop the node environment, run:
 
 ```sh
-./waggle down
+./waggle-node down
 ```
 
 To view logs from the node environment, run:
 
 ```sh
-./waggle logs
+./waggle-node logs
 ```
 
 ### Adding Plugins
@@ -42,7 +42,7 @@ First, we'll assume you've already started a node environment.
 Now, we'll generate a configuration file with the single plugin `waggle/plugin-simple:0.1.0`.
 
 ```sh
-./waggle plugins waggle/plugin-simple:0.1.0
+./waggle-node plugins waggle/plugin-simple:0.1.0
 ```
 
 This will regenerate the `docker-compose.plugins.yml` file and update the running node environment.
