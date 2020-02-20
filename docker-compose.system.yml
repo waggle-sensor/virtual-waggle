@@ -1,0 +1,37 @@
+version: '3'
+services:
+
+  rabbitmq:
+    build: services/rabbitmq-node
+    env_file:
+      - waggle-node.env
+    ports:
+      - "127.0.0.1:15672:15672"
+    volumes:
+      - "${WAGGLE_ETC_ROOT}:/etc/waggle:ro"
+    networks:
+      - waggle
+    restart: always
+
+  registration:
+    build: services/registration
+    env_file:
+      - waggle-node.env
+    volumes:
+      - "${WAGGLE_ETC_ROOT}:/etc/waggle"
+    networks:
+      - waggle
+    restart: on-failure
+
+  message-staging-node:
+    build: services/message-staging-node
+    env_file:
+      - waggle-node.env
+    volumes:
+      - "${WAGGLE_ETC_ROOT}:/etc/waggle:ro"
+    networks:
+      - waggle
+    restart: always
+
+networks:
+  waggle:
