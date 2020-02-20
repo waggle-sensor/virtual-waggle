@@ -82,14 +82,8 @@ should_exist = [
 ]
 
 
-def main():
-    should_exist = [
-        Path('/etc/waggle/cacert.pem'),
-        Path('/etc/waggle/cert.pem'),
-        Path('/etc/waggle/key.pem'),
-        Path('/etc/waggle/reverse_ssh_port'),
-    ]
-
+def register_if_needed():
+    # TODO check if credentials are valid
     if all(path.exists() for path in should_exist):
         logging.info('credentials already exist. done!')
         return
@@ -114,6 +108,12 @@ def main():
     Path('/etc/waggle/reverse_ssh_port').write_text(port)
 
     logging.info('registration complete')
+
+
+def main():
+    while True:
+        register_if_needed()
+        time.sleep(300)
 
 
 if __name__ == '__main__':
