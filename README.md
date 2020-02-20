@@ -37,7 +37,7 @@ To view logs from the node environment, run:
 
 This is under major development! It will eventually be handled by our resource manager, but for now we have some manual tools to handle this.
 
-Additionally, it's likely that plugins will eventually be kept in the ECR and available across platforms. For now, when testing on my laptop I've had to manually build docker images from the [edge-plugins](https://github.com/waggle-sensor/edge-plugins) repo.
+Additionally, it's likely that plugins will eventually be kept in the [ECR](https://github.com/sagecontinuum/ecr) and available across platforms. For now, when testing on my laptop I've had to manually build docker images from the [edge-plugins](https://github.com/waggle-sensor/edge-plugins) repo.
 
 First, we'll assume you've already started a node environment.
 
