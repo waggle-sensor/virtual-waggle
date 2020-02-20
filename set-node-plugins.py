@@ -134,7 +134,7 @@ template_header = '''version: '3'
 services:'''
 
 
-def generate_template_for_services(services):
+def generate_compose_file_for_services(services):
     if len(services) == 0:
         return empty_services_template
 
@@ -146,13 +146,15 @@ def generate_template_for_services(services):
     return template
 
 
-Path('docker-compose.plugins.yml').write_text(generate_template_for_services(services))
+# write compose file
+Path('docker-compose.plugins.yml').write_text(generate_compose_file_for_services(services))
 
-print(subprocess.check_output([
+# update running services
+subprocess.check_call([
     'docker-compose',
     '-f', 'docker-compose.system.yml',
     '-f', 'docker-compose.plugins.yml',
     'up',
     '-d',
     '--remove-orphans',  # removes plugins no longer enabled
-]))
+])
