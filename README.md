@@ -42,7 +42,7 @@ First, we'll assume you've already started a node environment.
 Now, we'll generate a configuration file with the single plugin `waggle/plugin-simple:0.1.0`.
 
 ```sh
-./waggle waggle/plugin-simple:0.1.0
+./waggle plugins waggle/plugin-simple:0.1.0
 ```
 
 This will regenerate the `docker-compose.plugins.yml` file and update the running node environment.
