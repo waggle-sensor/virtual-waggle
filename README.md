@@ -18,19 +18,19 @@ WAGGLE_BEEHIVE_HOST=host.docker.internal
 To start the node environment, run:
 
 ```sh
-./node.up.sh
+./waggle up
 ```
 
 To stop the node environment, run:
 
 ```sh
-./node.down.sh
+./waggle down
 ```
 
 To view logs from the node environment, run:
 
 ```sh
-./node.logs.sh
+./waggle logs
 ```
 
 ### Adding Plugins

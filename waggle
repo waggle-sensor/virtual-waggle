@@ -22,6 +22,12 @@ command_logs() {
     docker-compose $compose_file_args logs -f
 }
 
+command reset() {
+    command_up $@
+    rm -rf private/
+    command_down $@
+}
+
 command="$1"
 shift
 
@@ -29,4 +35,5 @@ case "$command" in
     up) command_up $@ ;;
     down) command_down $@ ;;
     logs) command_logs $@ ;;
+    reset) command_reset $@ ;;
 esac
