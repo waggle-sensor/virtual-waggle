@@ -7,6 +7,7 @@ import re
 import os
 from hashlib import sha256
 from base64 import b64encode
+import subprocess
 
 auth = ('admin', 'admin')
 
@@ -126,10 +127,32 @@ service_template = '''
       - "WAGGLE_PLUGIN_PASSWORD={plugin_password}"
 '''
 
-template = '''version: '3'
+empty_services_template = '''version: '3'
+services: {}'''
+
+template_header = '''version: '3'
 services:'''
 
-for service in services:
-    template += service_template.format(**service)
 
-Path('docker-compose.plugins.yml').write_text(template)
+def generate_template_for_services(services):
+    if len(services) == 0:
+        return empty_services_template
+
+    template = template_header
+
+    for service in services:
+        template += service_template.format(**service)
+
+    return template
+
+
+Path('docker-compose.plugins.yml').write_text(generate_template_for_services(services))
+
+print(subprocess.check_output([
+    'docker-compose',
+    '-f', 'docker-compose.system.yml',
+    '-f', 'docker-compose.plugins.yml',
+    'up',
+    '-d',
+    '--remove-orphans',  # removes plugins no longer enabled
+]))

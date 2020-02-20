@@ -45,10 +45,4 @@ Now, we'll generate a configuration file with the single plugin `waggle/plugin-s
 python3 set-node-plugins.py waggle/plugin-simple:0.1.0
 ```
 
-This will update the `docker-compose.plugins.yml` file and is ready for deployment. Simply start the environment again with
-
-```sh
-./node.up.sh
-```
-
-This will detect the configuration changes and update the environment.
+This will regenerate the `docker-compose.plugins.yml` file and update the running node environment.
