@@ -22,10 +22,14 @@ command_logs() {
     docker-compose $compose_file_args logs -f
 }
 
-command reset() {
+command_reset() {
     command_up $@
     rm -rf private/
     command_down $@
+}
+
+command_plugins() {
+    python3 set-node-plugins.py $@
 }
 
 command="$1"
@@ -36,4 +40,5 @@ case "$command" in
     down) command_down $@ ;;
     logs) command_logs $@ ;;
     reset) command_reset $@ ;;
+    plugins) command_plugins $@ ;;
 esac
