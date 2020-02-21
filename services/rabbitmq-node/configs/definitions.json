@@ -54,6 +54,34 @@
             "durable": true,
             "auto_delete": false,
             "arguments": {}
+        },
+        {
+            "name": "forward-0000000000000001",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "forward-0000000000000002",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "forward-0000000000000003",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "forward-0000000000000004",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
         }
     ],
     "exchanges": [
@@ -83,6 +111,38 @@
             "destination": "messages",
             "destination_type": "queue",
             "routing_key": "messages",
+            "arguments": {}
+        },
+        {
+            "source": "to-node",
+            "vhost": "/",
+            "destination": "forward-0000000000000001",
+            "destination_type": "queue",
+            "routing_key": "*.0000000000000001.#",
+            "arguments": {}
+        },
+        {
+            "source": "to-node",
+            "vhost": "/",
+            "destination": "forward-0000000000000002",
+            "destination_type": "queue",
+            "routing_key": "*.0000000000000002.#",
+            "arguments": {}
+        },
+        {
+            "source": "to-node",
+            "vhost": "/",
+            "destination": "forward-0000000000000003",
+            "destination_type": "queue",
+            "routing_key": "*.0000000000000003.#",
+            "arguments": {}
+        },
+        {
+            "source": "to-node",
+            "vhost": "/",
+            "destination": "forward-0000000000000004",
+            "destination_type": "queue",
+            "routing_key": "*.0000000000000004.#",
             "arguments": {}
         }
     ]
