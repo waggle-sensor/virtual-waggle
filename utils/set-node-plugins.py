@@ -9,8 +9,8 @@ from hashlib import sha256
 from base64 import b64encode
 import subprocess
 
-WAGGLE_NODE_ID = os.environ['WAGGLE_NODE_ID']
-WAGGLE_SUB_ID = os.environ['WAGGLE_SUB_ID']
+WAGGLE_NODE_ID = os.environ['WAGGLE_NODE_ID'].lower()
+WAGGLE_SUB_ID = os.environ['WAGGLE_SUB_ID'].lower()
 
 
 def generate_random_password():

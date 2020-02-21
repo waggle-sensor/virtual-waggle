@@ -3,17 +3,20 @@ import requests
 import json
 import re
 import utils
+import os
 
+WAGGLE_NODE_ID = os.environ['WAGGLE_NODE_ID'].lower()
+WAGGLE_SUB_ID = os.environ['WAGGLE_SUB_ID'].lower()
+WAGGLE_BEEHIVE_HOST = os.environ['WAGGLE_BEEHIVE_HOST']
 
-username = utils.read_username_from_cert()
-match = re.search(r'node\-([0-9a-fA-F]{16})', username)
-node_id = match.group(1)[-12:]
+node_uri = (
+    'amqp://worker:worker@localhost'
+)
 
-# beehive_hostname = 'beehive1.mcs.anl.gov'
-beehive_hostname = 'host.docker.internal'
+beehive_username = f'node-{WAGGLE_NODE_ID}'
 
 beehive_uri = (
-    f'amqps://{username}@{beehive_hostname}:23181'
+    f'amqps://{beehive_username}@{WAGGLE_BEEHIVE_HOST}:23181'
     '?auth_mechanism=external'
     '&cacertfile=/etc/waggle/cacert.pem'
     '&certfile=/etc/waggle/cert.pem'
@@ -24,10 +27,6 @@ beehive_uri = (
     # '&heartbeat=60'
 )
 
-node_uri = (
-    'amqp://worker:worker@localhost'
-)
-
 configs = {
     'push-to-beehive-v1': {
         'src-uri': node_uri,
@@ -36,8 +35,9 @@ configs = {
         'dest-exchange': 'data-pipeline-in',
         'publish-properties': {
             'delivery_mode': 2,
-            'user_id': username,
-            'reply_to': node_id,
+            'user_id': beehive_username,
+            # old data path uses short node ID
+            'reply_to': WAGGLE_NODE_ID[-12:],
         },
     },
     'push-to-beehive-v2': {
@@ -47,12 +47,12 @@ configs = {
         'dest-exchange': 'messages',
         'publish-properties': {
             'delivery_mode': 2,
-            'user_id': username,
+            'user_id': beehive_username,
         },
     },
     'pull-from-beehive-v2': {
         'src-uri': beehive_uri,
-        'src-queue': f'to-{username}',
+        'src-queue': f'to-{beehive_username}',
         'dest-uri': node_uri,
         'dest-exchange': 'to-node',
         'publish-properties': {
