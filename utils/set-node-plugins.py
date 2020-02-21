@@ -175,7 +175,7 @@ Path('docker-compose.plugins.yml').write_text(generate_compose_file_for_services
 # update running services
 subprocess.check_call([
     'docker-compose',
-    '-f', 'docker-compose.system.yml',
+    '-f', 'docker-compose.yml',
     '-f', 'docker-compose.plugins.yml',
     'up',
     '-d',
