@@ -8,10 +8,12 @@ Scratch space for debugging RabbitMQ shovels and trying data stack spin up.
 
 The node configuration can be found in `waggle-node.env`. A typical configuration specifies a node ID and a beehive hostname.
 
-```text
+```bash
 WAGGLE_NODE_ID=0000000000000001
 WAGGLE_SUB_ID=0000000000000000
 WAGGLE_BEEHIVE_HOST=host.docker.internal
+# for actual deployment specify real hostname
+# WAGGLE_BEEHIVE_HOST=beehive1.mcs.anl.gov
 ```
 
 ### Running the Node Environment
