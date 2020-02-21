@@ -9,8 +9,6 @@ from hashlib import sha256
 from base64 import b64encode
 import subprocess
 
-auth = ('admin', 'admin')
-
 
 def generate_random_password():
     return ssl.RAND_bytes(20).hex()
@@ -50,18 +48,39 @@ def update_rabbitmq_user_permissions(session, username, permissions):
                 json=permissions)
 
 
-def update_user(username, password):
+def setup_rabbitmq_for_service(service):
+    username = service['plugin_username']
+    password = service['plugin_password']
+
+    plugin_queue = f'to-{username}'
+
     with requests.Session() as session:
-        session.auth = auth
+        session.auth = ('admin', 'admin')
 
         update_rabbitmq_user(session, username, password)
 
-        queue = f'to-{username}'
         update_rabbitmq_user_permissions(session, username, permissions={
-            'configure': f'^{queue}$',
-            'write': f'^{queue}|messages|data-pipeline-in|logs|images$',
-            'read': f'^{queue}$',
+            'configure': f'^$',
+            'write': f'^messages|data$',
+            'read': f'^{plugin_queue}$',
         })
+
+        # create queue to message to plugin
+
+        r = session.put(f'http://localhost:15672/api/queues/%2f/{plugin_queue}', json={
+            'durable': True,
+        })
+
+        assert r.status_code == 204
+
+        # add binding for nodeid prefix
+        # TODO get proper node ID
+        # TODO get proper component ID
+        r = session.post(f'http://localhost:15672/api/bindings/%2f/e/to-node/q/{plugin_queue}', json={
+            'routing_key': f'0000000000000001.0000000000000000.{plugin_id}.{plugin_version}.{plugin_instance}'.format(**service),
+        })
+
+        assert r.status_code == 201
 
 
 # ah... we need a way to map between names and internal IDs now...
@@ -91,8 +110,6 @@ for plugin in args.plugins:
     username = f'plugin-{plugin_id}-{plugin_version}-{plugin_instance}'
     password = generate_random_password()
 
-    update_user(username, password)
-
     Path('private', 'plugins', username).mkdir(parents=True, exist_ok=True)
     Path('private', 'plugins', username, 'plugin.credentials').write_text(f'''
     [credentials]
@@ -109,6 +126,11 @@ for plugin in args.plugins:
         'plugin_username': username,
         'plugin_password': password,
     })
+
+
+for service in services:
+    setup_rabbitmq_for_service(service)
+
 
 service_template = '''
   {name}:

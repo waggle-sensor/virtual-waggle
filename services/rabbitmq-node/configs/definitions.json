@@ -54,13 +54,6 @@
             "durable": true,
             "auto_delete": false,
             "arguments": {}
-        },
-        {
-            "name": "to-node",
-            "vhost": "/",
-            "durable": true,
-            "auto_delete": false,
-            "arguments": {}
         }
     ],
     "exchanges": [
@@ -90,14 +83,6 @@
             "destination": "messages",
             "destination_type": "queue",
             "routing_key": "messages",
-            "arguments": {}
-        },
-        {
-            "source": "to-node",
-            "vhost": "/",
-            "destination": "to-node",
-            "destination_type": "queue",
-            "routing_key": "#",
             "arguments": {}
         }
     ]
