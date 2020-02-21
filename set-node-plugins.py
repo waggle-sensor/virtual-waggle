@@ -9,6 +9,9 @@ from hashlib import sha256
 from base64 import b64encode
 import subprocess
 
+WAGGLE_NODE_ID = os.environ['WAGGLE_NODE_ID']
+WAGGLE_SUB_ID = os.environ['WAGGLE_SUB_ID']
+
 
 def generate_random_password():
     return ssl.RAND_bytes(20).hex()
@@ -71,16 +74,16 @@ def setup_rabbitmq_for_service(service):
             'durable': True,
         })
 
-        assert r.status_code == 204
+        assert r.status_code in [201, 204]
 
         # add binding for nodeid prefix
         # TODO get proper node ID
         # TODO get proper component ID
         r = session.post(f'http://localhost:15672/api/bindings/%2f/e/to-node/q/{plugin_queue}', json={
-            'routing_key': f'0000000000000001.0000000000000000.{plugin_id}.{plugin_version}.{plugin_instance}'.format(**service),
+            'routing_key': f'{WAGGLE_NODE_ID}.{WAGGLE_SUB_ID}.{plugin_id}.{plugin_version}.{plugin_instance}'.format(**service),
         })
 
-        assert r.status_code == 201
+        assert r.status_code in [201, 204]
 
 
 # ah... we need a way to map between names and internal IDs now...

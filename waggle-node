@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# load environment variables from waggle-node.env
+for line in $(grep '.*=.*' waggle-node.env); do
+    export $line
+done
+
+# use docker-compose.plugins.yml if it exists
 if [ -e 'docker-compose.plugins.yml' ]; then
     compose_file_args='-f docker-compose.system.yml -f docker-compose.plugins.yml'
 else
