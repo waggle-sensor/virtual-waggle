@@ -51,8 +51,10 @@ def get_request_id():
 
         try:
             r = requests.post(
-                f'http://{WAGGLE_BEEHIVE_HOST}/api/registration?nodeid={WAGGLE_NODE_ID}').json()
-            request_id = r['data']
+                f'http://{WAGGLE_BEEHIVE_HOST}/api/registration?nodeid={WAGGLE_NODE_ID}')
+            r.raise_for_status()
+            resp = r.json()
+            request_id = resp['data']
             logging.info('got request ID %s', request_id)
             return request_id
         except Exception:
@@ -66,6 +68,7 @@ def get_response_for_request_id(request_id):
 
         r = requests.get(
             f'http://{WAGGLE_BEEHIVE_HOST}/api/registration/{request_id}')
+        r.raise_for_status()
 
         if 'pending' in r.text:
             time.sleep(10)
