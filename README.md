@@ -14,7 +14,7 @@ WAGGLE_SUB_ID=0000000000000000
 WAGGLE_BEEHIVE_HOST=host.docker.internal
 ```
 
-### Commands
+### Running the Node Environment
 
 To start the node environment, run:
 
