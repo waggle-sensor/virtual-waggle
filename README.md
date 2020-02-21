@@ -10,6 +10,7 @@ The node configuration can be found in `waggle-node.env`. A typical configuratio
 
 ```text
 WAGGLE_NODE_ID=0000000000000001
+WAGGLE_SUB_ID=0000000000000000
 WAGGLE_BEEHIVE_HOST=host.docker.internal
 ```
 
@@ -33,18 +34,14 @@ To view logs from the node environment, run:
 ./waggle-node logs
 ```
 
-### Adding Plugins
+### Scheduling Plugins
 
-This is under major development! It will eventually be handled by our resource manager, but for now we have some manual tools to handle this.
+_This is under major development! It will eventually be handled by our resource manager, but for now we have some manual tools to handle this._
 
-Additionally, it's likely that plugins will eventually be kept in the [ECR](https://github.com/sagecontinuum/ecr) and available across platforms. For now, when testing on my laptop I've had to manually build docker images from the [edge-plugins](https://github.com/waggle-sensor/edge-plugins) repo.
+_Additionally, it's likely that plugins will eventually be kept in the [ECR](https://github.com/sagecontinuum/ecr) and available across platforms. For now, when testing on my laptop I've had to manually build docker images from the [edge-plugins](https://github.com/waggle-sensor/edge-plugins) repo._
 
-First, we'll assume you've already started a node environment.
-
-Now, we'll generate a configuration file with the single plugin `waggle/plugin-simple:0.1.0`.
+Assuming you've already started a node environment, we'll schedule the single plugin `waggle/plugin-simple:0.1.0`.
 
 ```sh
 ./waggle-node plugins waggle/plugin-simple:0.1.0
 ```
-
-This will regenerate the `docker-compose.plugins.yml` file and update the running node environment.
