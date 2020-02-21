@@ -2,7 +2,6 @@ import argparse
 import requests
 import json
 import re
-import utils
 import os
 
 WAGGLE_NODE_ID = os.environ['WAGGLE_NODE_ID'].lower()
