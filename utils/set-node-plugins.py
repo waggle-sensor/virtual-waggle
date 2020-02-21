@@ -84,16 +84,11 @@ def setup_rabbitmq_for_service(service):
         assert r.status_code in [201, 204]
 
 
-# ah... we need a way to map between names and internal IDs now...
+def get_plugin_id_for_image(image):
+    output = subprocess.check_output(
+        ['docker', 'run', '--rm', image, 'printenv', 'WAGGLE_PLUGIN_ID'])
+    return int(output)
 
-# username must match
-# 'plugin-(id)-(version)-(instance)'
-# plugin-simple     0.1.0
-
-# ...for now, have to map between internal ids and common name...
-plugin_ids = {
-    'simple': 37,
-}
 
 parser = argparse.ArgumentParser()
 parser.add_argument('plugins', nargs='*')
@@ -105,7 +100,7 @@ for plugin in args.plugins:
     match = re.match(r'waggle/plugin-(\S+):(\S+)', plugin)
     plugin_name = match.group(1)
     plugin_version = match.group(2)
-    plugin_id = plugin_ids[plugin_name]
+    plugin_id = get_plugin_id_for_image(plugin)
     plugin_instance = 0
 
     username = f'plugin-{plugin_id}-{plugin_version}-{plugin_instance}'
