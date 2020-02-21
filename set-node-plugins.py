@@ -63,7 +63,7 @@ def setup_rabbitmq_for_service(service):
         update_rabbitmq_user(session, username, password)
 
         update_rabbitmq_user_permissions(session, username, permissions={
-            'configure': f'^$',
+            'configure': f'^{plugin_queue}$',
             'write': f'^messages|data$',
             'read': f'^{plugin_queue}$',
         })
