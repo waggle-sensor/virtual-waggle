@@ -15,7 +15,7 @@ fi
 command_up() {
     docker-compose $compose_file_args up --build -d --remove-orphans
 
-    while ! python3 shovelctl.py enable; do
+    while ! python3 utils/shovelctl.py enable; do
         sleep 3
     done
 }
@@ -36,7 +36,7 @@ command_reset() {
 }
 
 command_plugins() {
-    python3 set-node-plugins.py $@
+    python3 utils/set-node-plugins.py $@
 }
 
 command="$1"
