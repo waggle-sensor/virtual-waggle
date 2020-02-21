@@ -2,7 +2,11 @@
 
 ## Running a test environment
 
-Scratch space for debugging RabbitMQ shovels and trying data stack spin up.
+### Requirements
+
+* Docker
+* Docker Compose
+* Python 3
 
 ### Configuration
 
