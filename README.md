@@ -43,5 +43,5 @@ _Additionally, it's likely that plugins will eventually be kept in the [ECR](htt
 Assuming you've already started a node environment, we'll schedule the single plugin `waggle/plugin-simple:0.1.0`.
 
 ```sh
-./waggle-node plugins waggle/plugin-simple:0.1.0
+./waggle-node schedule waggle/plugin-simple:0.1.0
 ```

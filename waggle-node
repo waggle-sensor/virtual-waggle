@@ -35,7 +35,7 @@ command_reset() {
     command_up $@
 }
 
-command_plugins() {
+command_schedule() {
     python3 utils/set-node-plugins.py $@
 }
 
@@ -47,5 +47,5 @@ case "$command" in
     down) command_down $@ ;;
     logs) command_logs $@ ;;
     reset) command_reset $@ ;;
-    plugins) command_plugins $@ ;;
+    schedule) command_schedule $@ ;;
 esac
