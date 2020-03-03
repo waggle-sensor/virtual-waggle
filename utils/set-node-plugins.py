@@ -188,11 +188,11 @@ def generate_compose_file_for_services(services):
         if len(service['plugin_devices']) > 0:
             template += device_template
             for device in service['plugin_devices']:
-                template += '      - "{0}:{1}"\n'.format(device, device)
+                template += '      - "{0}:{0}"\n'.format(device)
         if len(service['plugin_volumes']) > 0:
             template += volume_template.format(**service)
             for volume in service['plugin_volumes']:
-                template += '      - "{0}:{1}"\n'.format(volume, volume)
+                template += '      - "{0}:{0}"\n'.format(volume)
 
     return template
 
