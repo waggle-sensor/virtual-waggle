@@ -90,6 +90,17 @@ def get_plugin_id_for_image(image):
     return int(output)
 
 
+def get_plugin_labels_for_image(image, domain):
+    output = subprocess.check_output([
+        'docker',
+        'inspect',
+        '--format',
+        '{{ range $k, $v := .Config.Labels }} {{ $k }}={{ $v }}, {{ end }}',
+        image
+    ])
+    return [label.split('=')[1] for label in output.decode().strip().split(',') if domain in label]
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument('plugins', nargs='*')
 args = parser.parse_args()
@@ -113,7 +124,7 @@ for plugin in args.plugins:
     password={password}
     '''.strip())
 
-    services.append({
+    service = {
         'image': plugin,
         'name': username,
         'plugin_id': plugin_id,
@@ -121,7 +132,14 @@ for plugin in args.plugins:
         'plugin_instance': plugin_instance,
         'plugin_username': username,
         'plugin_password': password,
+    }
+    devices = get_plugin_labels_for_image(plugin, "waggle.devices")
+    volumes = get_plugin_labels_for_image(plugin, "waggle.volumes")
+    service.update({
+        'plugin_devices': devices,
+        'plugin_volumes': volumes
     })
+    services.append(service)
 
 
 for service in services:
@@ -134,8 +152,6 @@ service_template = '''
     restart: always
     networks:
       - waggle
-    volumes:
-      - "${{WAGGLE_ETC_ROOT}}/plugins/{plugin_username}/plugin.credentials:/plugin/plugin.credentials:ro"
     environment:
       - "WAGGLE_PLUGIN_HOST=rabbitmq"
       - "WAGGLE_PLUGIN_ID={plugin_id}"
@@ -143,6 +159,15 @@ service_template = '''
       - "WAGGLE_PLUGIN_INSTANCE={plugin_instance}"
       - "WAGGLE_PLUGIN_USERNAME={plugin_username}"
       - "WAGGLE_PLUGIN_PASSWORD={plugin_password}"
+'''
+
+device_template = '''
+    devices:
+'''
+
+volume_template = '''
+    volumes:
+      - "${{WAGGLE_ETC_ROOT}}/plugins/{plugin_username}/plugin.credentials:/plugin/plugin.credentials:ro"
 '''
 
 empty_services_template = '''version: '3'
@@ -160,6 +185,14 @@ def generate_compose_file_for_services(services):
 
     for service in services:
         template += service_template.format(**service)
+        if len(service['plugin_devices']) > 0:
+            template += device_template
+            for device in service['plugin_devices']:
+                template += '      - "{0}:{1}"\n'.format(device, device)
+        if len(service['plugin_volumes']) > 0:
+            template += volume_template.format(**service)
+            for volume in service['plugin_volumes']:
+                template += '      - "{0}:{1}"\n'.format(volume, volume)
 
     return template
 
