@@ -25,7 +25,7 @@ command_down() {
 }
 
 command_logs() {
-    docker-compose $compose_file_args logs -f
+    docker-compose $compose_file_args logs --tail 100 -f
 }
 
 command_reset() {

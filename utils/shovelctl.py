@@ -3,6 +3,7 @@ import requests
 import json
 import re
 import os
+import time
 
 WAGGLE_NODE_ID = os.environ['WAGGLE_NODE_ID'].lower()
 WAGGLE_SUB_ID = os.environ['WAGGLE_SUB_ID'].lower()
@@ -63,19 +64,30 @@ configs = {
 auth = ('admin', 'admin')
 
 
+def wait_for_rabbitmq():
+    while True:
+        try:
+            return requests.get(f'http://localhost:15672/api/')
+        except requests.exceptions.ConnectionError:
+            time.sleep(5)
+
+
 def enable_shovels():
+    wait_for_rabbitmq()
+
     with requests.Session() as session:
         session.auth = auth
 
         for name, config in configs.items():
-            r = session.put(
-                f'http://localhost:15672/api/parameters/shovel/%2f/{name}', json={
-                    'value': config,
-                })
+            r = session.put(f'http://localhost:15672/api/parameters/shovel/%2f/{name}', json={
+                'value': config,
+            })
             print(r.text)
 
 
 def disable_shovels():
+    wait_for_rabbitmq()
+
     with requests.Session() as session:
         session.auth = auth
 

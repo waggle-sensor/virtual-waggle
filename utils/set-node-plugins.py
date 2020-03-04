@@ -8,6 +8,7 @@ import os
 from hashlib import sha256
 from base64 import b64encode
 import subprocess
+import json
 
 WAGGLE_NODE_ID = os.environ['WAGGLE_NODE_ID'].lower()
 WAGGLE_SUB_ID = os.environ['WAGGLE_SUB_ID'].lower()
@@ -90,6 +91,17 @@ def get_plugin_id_for_image(image):
     return int(output)
 
 
+def get_plugin_labels_for_image(image, domain):
+    output = subprocess.check_output([
+        'docker',
+        'inspect',
+        '--format',
+        '{{ range $k, $v := .Config.Labels }} {{ $k }}={{ $v }}, {{ end }}',
+        image
+    ])
+    return [label.split('=')[1] for label in output.decode().strip().split(',') if domain in label]
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument('plugins', nargs='*')
 args = parser.parse_args()
@@ -113,7 +125,7 @@ for plugin in args.plugins:
     password={password}
     '''.strip())
 
-    services.append({
+    service = {
         'image': plugin,
         'name': username,
         'plugin_id': plugin_id,
@@ -121,47 +133,54 @@ for plugin in args.plugins:
         'plugin_instance': plugin_instance,
         'plugin_username': username,
         'plugin_password': password,
+    }
+    devices = get_plugin_labels_for_image(plugin, "waggle.devices")
+    volumes = get_plugin_labels_for_image(plugin, "waggle.volumes")
+    service.update({
+        'plugin_devices': devices,
+        'plugin_volumes': volumes
     })
+    services.append(service)
 
 
 for service in services:
     setup_rabbitmq_for_service(service)
 
 
-service_template = '''
-  {name}:
-    image: {image}
-    restart: always
-    networks:
-      - waggle
-    volumes:
-      - "${{WAGGLE_ETC_ROOT}}/plugins/{plugin_username}/plugin.credentials:/plugin/plugin.credentials:ro"
-    environment:
-      - "WAGGLE_PLUGIN_HOST=rabbitmq"
-      - "WAGGLE_PLUGIN_ID={plugin_id}"
-      - "WAGGLE_PLUGIN_VERSION={plugin_version}"
-      - "WAGGLE_PLUGIN_INSTANCE={plugin_instance}"
-      - "WAGGLE_PLUGIN_USERNAME={plugin_username}"
-      - "WAGGLE_PLUGIN_PASSWORD={plugin_password}"
-'''
-
-empty_services_template = '''version: '3'
-services: {}'''
-
-template_header = '''version: '3'
-services:'''
-
-
 def generate_compose_file_for_services(services):
-    if len(services) == 0:
-        return empty_services_template
+    return json.dumps({
+        'version': '3',
+        'services': generate_services_block(services),
+    })
 
-    template = template_header
 
-    for service in services:
-        template += service_template.format(**service)
+def generate_services_block(services):
+    return {service['name']: generate_service_block(service)}
 
-    return template
+
+def generate_service_block(service):
+    return {
+        'image': service['image'],
+        'restart': 'always',
+        'networks': ['waggle'],
+        'environment': [
+            "WAGGLE_PLUGIN_HOST=rabbitmq",
+            "WAGGLE_PLUGIN_ID={plugin_id}".format(**service),
+            "WAGGLE_PLUGIN_VERSION={plugin_version}".format(**service),
+            "WAGGLE_PLUGIN_INSTANCE={plugin_instance}".format(**service),
+            "WAGGLE_PLUGIN_USERNAME={plugin_username}".format(**service),
+            "WAGGLE_PLUGIN_PASSWORD={plugin_password}".format(**service),
+        ],
+        'volumes': generate_volumes_block(service),
+    }
+
+
+def generate_volumes_block(service):
+    return (
+        ["${{WAGGLE_ETC_ROOT}}/plugins/{plugin_username}/plugin.credentials:/plugin/plugin.credentials:ro".format(**service)] +
+        ['{0}:{0}'.format(device) for device in service['plugin_devices']] +
+        ['{0}:{0}'.format(device) for device in service['plugin_volumes']]
+    )
 
 
 # write compose file
