@@ -8,6 +8,7 @@ import os
 from hashlib import sha256
 from base64 import b64encode
 import subprocess
+import json
 
 WAGGLE_NODE_ID = os.environ['WAGGLE_NODE_ID'].lower()
 WAGGLE_SUB_ID = os.environ['WAGGLE_SUB_ID'].lower()
@@ -146,55 +147,40 @@ for service in services:
     setup_rabbitmq_for_service(service)
 
 
-service_template = '''
-  {name}:
-    image: {image}
-    restart: always
-    networks:
-      - waggle
-    environment:
-      - "WAGGLE_PLUGIN_HOST=rabbitmq"
-      - "WAGGLE_PLUGIN_ID={plugin_id}"
-      - "WAGGLE_PLUGIN_VERSION={plugin_version}"
-      - "WAGGLE_PLUGIN_INSTANCE={plugin_instance}"
-      - "WAGGLE_PLUGIN_USERNAME={plugin_username}"
-      - "WAGGLE_PLUGIN_PASSWORD={plugin_password}"
-'''
-
-device_template = '''
-    devices:
-'''
-
-volume_template = '''
-    volumes:
-      - "${{WAGGLE_ETC_ROOT}}/plugins/{plugin_username}/plugin.credentials:/plugin/plugin.credentials:ro"
-'''
-
-empty_services_template = '''version: '3'
-services: {}'''
-
-template_header = '''version: '3'
-services:'''
-
-
 def generate_compose_file_for_services(services):
-    if len(services) == 0:
-        return empty_services_template
+    return json.dumps({
+        'version': '3',
+        'services': generate_services_block(services),
+    })
 
-    template = template_header
 
-    for service in services:
-        template += service_template.format(**service)
-        if len(service['plugin_devices']) > 0:
-            template += device_template
-            for device in service['plugin_devices']:
-                template += '      - "{0}:{0}"\n'.format(device)
-        if len(service['plugin_volumes']) > 0:
-            template += volume_template.format(**service)
-            for volume in service['plugin_volumes']:
-                template += '      - "{0}:{0}"\n'.format(volume)
+def generate_services_block(services):
+    return {service['name']: generate_service_block(service)}
 
-    return template
+
+def generate_service_block(service):
+    return {
+        'image': service['image'],
+        'restart': 'always',
+        'networks': ['waggle'],
+        'environment': [
+            "WAGGLE_PLUGIN_HOST=rabbitmq",
+            "WAGGLE_PLUGIN_ID={plugin_id}".format(**service),
+            "WAGGLE_PLUGIN_VERSION={plugin_version}".format(**service),
+            "WAGGLE_PLUGIN_INSTANCE={plugin_instance}".format(**service),
+            "WAGGLE_PLUGIN_USERNAME={plugin_username}".format(**service),
+            "WAGGLE_PLUGIN_PASSWORD={plugin_password}".format(**service),
+        ],
+        'volumes': generate_volumes_block(service),
+    }
+
+
+def generate_volumes_block(service):
+    return (
+        ["${{WAGGLE_ETC_ROOT}}/plugins/{plugin_username}/plugin.credentials:/plugin/plugin.credentials:ro".format(**service)] +
+        ['{0}:{0}'.format(device) for device in service['plugin_devices']] +
+        ['{0}:{0}'.format(device) for device in service['plugin_volumes']]
+    )
 
 
 # write compose file
