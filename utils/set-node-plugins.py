@@ -147,11 +147,11 @@ for service in services:
     setup_rabbitmq_for_service(service)
 
 
-def generate_compose_file_for_services(services):
-    return json.dumps({
+def generate_compose_for_services(services):
+    return {
         'version': '3',
         'services': generate_services_block(services),
-    })
+    }
 
 
 def generate_services_block(services):
@@ -183,8 +183,8 @@ def generate_volumes_block(service):
     )
 
 
-# write compose file
-Path('docker-compose.plugins.yml').write_text(generate_compose_file_for_services(services))
+with open('docker-compose.plugins.yml', 'w') as file:
+    json.dump(generate_compose_for_services(services), file, indent=True)
 
 # update running services
 subprocess.check_call([
