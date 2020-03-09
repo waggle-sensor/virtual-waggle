@@ -34,15 +34,13 @@ To stop the node environment, run:
 ./waggle-node down
 ```
 
-To view logs from the node environment, run:
+To view logs from the node environment, you can use:
 
 ```sh
+# view all logs, including node system services
 ./waggle-node logs
-```
 
-Or, if you only want plugin related logs
-
-```sh
+# view plugin related logs
 ./waggle-node logs | grep plugin
 ```
 
