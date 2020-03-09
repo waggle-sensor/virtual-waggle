@@ -28,11 +28,6 @@ command_logs() {
     docker-compose $compose_file_args logs --tail 100 -f
 }
 
-command_plugin_logs() {
-    plugins=$(sed -n 's/^.*"\(plugin-.*\)".*$/\1/ p' docker-compose.plugins.yml)
-    docker-compose $compose_file_args logs --tail 100 -f $plugins
-}
-
 command_reset() {
     command_down $@
     rm docker-compose.plugins.yml
@@ -51,7 +46,6 @@ case "$command" in
     up) command_up $@ ;;
     down) command_down $@ ;;
     logs) command_logs $@ ;;
-    plugin-logs) command_plugin_logs $@ ;;
     reset) command_reset $@ ;;
     schedule) command_schedule $@ ;;
 esac

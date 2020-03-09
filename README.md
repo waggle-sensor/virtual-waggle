@@ -40,6 +40,12 @@ To view logs from the node environment, run:
 ./waggle-node logs
 ```
 
+Or, if you only want plugin related logs
+
+```sh
+./waggle-node logs | grep plugin
+```
+
 ### Scheduling Plugins
 
 _This is under major development! It will eventually be handled by our resource manager, but for now we have some manual tools to handle this._
