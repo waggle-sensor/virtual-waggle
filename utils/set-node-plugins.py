@@ -9,6 +9,7 @@ from hashlib import sha256
 from base64 import b64encode
 import subprocess
 import json
+import sys
 
 WAGGLE_NODE_ID = os.environ['WAGGLE_NODE_ID'].lower()
 WAGGLE_SUB_ID = os.environ['WAGGLE_SUB_ID'].lower()
@@ -112,7 +113,13 @@ for plugin in args.plugins:
     match = re.match(r'waggle/plugin-(\S+):(\S+)', plugin)
     plugin_name = match.group(1)
     plugin_version = match.group(2)
-    plugin_id = get_plugin_id_for_image(plugin)
+
+    try:
+        plugin_id = get_plugin_id_for_image(plugin)
+    except Exception:
+        print(f'Missing WAGGLE_PLUGIN_ID for plugin {plugin}')
+        sys.exit(1)
+
     plugin_instance = 0
 
     username = f'plugin-{plugin_id}-{plugin_version}-{plugin_instance}'
