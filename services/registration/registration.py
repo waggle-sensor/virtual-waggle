@@ -45,44 +45,41 @@ def scan_port(s):
     return match.group(1)
 
 
-def get_request_id():
-    while True:
-        logging.info('getting request ID...')
-
-        try:
-            r = requests.post(
-                f'http://{WAGGLE_BEEHIVE_HOST}/api/registration?nodeid={WAGGLE_NODE_ID}')
-            r.raise_for_status()
-            resp = r.json()
-            request_id = resp['data']
-            logging.info('got request ID %s', request_id)
-            return request_id
-        except Exception:
-            logging.exception('failed to get request ID')
-            time.sleep(10)
-
-
-def get_response_for_request_id(request_id):
-    while True:
-        logging.info('getting credentials...')
-
-        r = requests.get(
-            f'http://{WAGGLE_BEEHIVE_HOST}/api/registration/{request_id}')
-        r.raise_for_status()
-
-        if 'pending' in r.text:
-            time.sleep(10)
-            continue
-
-        return r.text
-
-
 should_exist = [
     Path('/etc/waggle/cacert.pem'),
     Path('/etc/waggle/cert.pem'),
     Path('/etc/waggle/key.pem'),
     Path('/etc/waggle/reverse_ssh_port'),
 ]
+
+
+def get_cacert_from_local_cert_server():
+    r = requests.get(f'http://{WAGGLE_BEEHIVE_HOST}:24181/certca')
+    r.raise_for_status()
+    return scan_certificate(r.text)
+
+
+def get_credentials_from_local_cert_server():
+    r = requests.get(
+        f'http://{WAGGLE_BEEHIVE_HOST}:24181/node?{WAGGLE_NODE_ID}')
+    r.raise_for_status()
+    return r.text
+
+
+def register_with_local_cert_server():
+    cacert = get_cacert_from_local_cert_server()
+    logging.info('got ca cert')
+
+    response = get_credentials_from_local_cert_server()
+    cert = scan_certificate(response)
+    key = scan_key(response)
+    port = scan_port(response)
+    logging.info('got credentials')
+
+    Path('/etc/waggle/cacert.pem').write_text(cacert)
+    Path('/etc/waggle/cert.pem').write_text(cert)
+    Path('/etc/waggle/key.pem').write_text(key)
+    Path('/etc/waggle/reverse_ssh_port').write_text(port)
 
 
 def register_if_needed():
@@ -94,22 +91,9 @@ def register_if_needed():
     logging.info('registering node %s on beehive %s',
                  WAGGLE_NODE_ID, WAGGLE_BEEHIVE_HOST)
 
-    r = requests.get(f'http://{WAGGLE_BEEHIVE_HOST}:24181/certca')
-    cacert = scan_certificate(r.text)
-    logging.info('got ca certificate')
-
-    request_id = get_request_id()
-
-    response = get_response_for_request_id(request_id)
-    cert = scan_certificate(response)
-    key = scan_key(response)
-    port = scan_port(response)
-
-    Path('/etc/waggle/cacert.pem').write_text(cacert)
-    Path('/etc/waggle/cert.pem').write_text(cert)
-    Path('/etc/waggle/key.pem').write_text(key)
-    Path('/etc/waggle/reverse_ssh_port').write_text(port)
-
+    # TODO add support for using registration key
+    logging.warning('no registration key. falling back to local cert server.')
+    register_with_local_cert_server()
     logging.info('registration complete')
 
 
