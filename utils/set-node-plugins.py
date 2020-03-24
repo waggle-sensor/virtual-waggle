@@ -110,7 +110,7 @@ args = parser.parse_args()
 services = []
 
 for plugin in args.plugins:
-    match = re.match(r'waggle/plugin-(\S+):(\S+)', plugin)
+    match = re.match(r'plugin-(\S+):(\S+)', plugin.split('/')[-1])
     plugin_name = match.group(1)
     plugin_version = match.group(2)
 
