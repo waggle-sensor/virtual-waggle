@@ -1,5 +1,7 @@
 FROM python:3-alpine
 
+RUN apk add openssh-client
+
 WORKDIR /usr/src/app
 
 COPY requirements.txt ./

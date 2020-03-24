@@ -82,6 +82,48 @@ def register_with_local_cert_server():
     Path('/etc/waggle/reverse_ssh_port').write_text(port)
 
 
+def get_cacert_from_ssh_cert_server():
+    output = subprocess.check_output([
+        'ssh',
+        '-i', '/etc/waggle/register.pem',
+        '-o', 'StrictHostKeyChecking=no',
+        '-p', '20022',
+        f'root@{WAGGLE_BEEHIVE_HOST}',
+        'certca'
+    ]).decode()
+
+    return scan_certificate(output)
+
+
+def get_credentials_from_ssh_cert_server():
+    output = subprocess.check_output([
+        'ssh',
+        '-i', '/etc/waggle/register.pem',
+        '-o', 'StrictHostKeyChecking=no',
+        '-p', '20022',
+        f'root@{WAGGLE_BEEHIVE_HOST}',
+        f'node?{WAGGLE_NODE_ID}',
+    ]).decode()
+
+    return output
+
+
+def register_with_ssh_cert_server():
+    cacert = get_cacert_from_ssh_cert_server()
+    logging.info('got ca cert')
+
+    response = get_credentials_from_ssh_cert_server()
+    cert = scan_certificate(response)
+    key = scan_key(response)
+    port = scan_port(response)
+    logging.info('got credentials')
+
+    Path('/etc/waggle/cacert.pem').write_text(cacert)
+    Path('/etc/waggle/cert.pem').write_text(cert)
+    Path('/etc/waggle/key.pem').write_text(key)
+    Path('/etc/waggle/reverse_ssh_port').write_text(port)
+
+
 def register_if_needed():
     # TODO check if credentials are valid
     if all(path.exists() for path in should_exist):
@@ -92,8 +134,15 @@ def register_if_needed():
                  WAGGLE_NODE_ID, WAGGLE_BEEHIVE_HOST)
 
     # TODO add support for using registration key
-    logging.warning('no registration key. falling back to local cert server.')
-    register_with_local_cert_server()
+
+    if Path('/etc/waggle/register.pem').exists():
+        logging.info('will try registration key')
+        register_with_ssh_cert_server()
+    else:
+        logging.warning(
+            'no registration key, falling back to local cert server.')
+        register_with_local_cert_server()
+
     logging.info('registration complete')
 
 
