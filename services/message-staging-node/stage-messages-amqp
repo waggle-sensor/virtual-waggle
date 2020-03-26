@@ -15,8 +15,7 @@ import os
 
 
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    datefmt='%Y/%m/%d %H:%M:%S %Z',
+    format='%(levelname)s | %(message)s',
     level=logging.INFO,
 )
 
