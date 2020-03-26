@@ -4,8 +4,8 @@
 
 ### Requirements
 
-* Docker
-* Docker Compose
+* [Docker](https://docs.docker.com/install/)
+* [Docker Compose](https://docs.docker.com/compose/install/)
 * Python 3
 
 ### Configuration

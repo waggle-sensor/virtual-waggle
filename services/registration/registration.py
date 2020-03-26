@@ -6,7 +6,11 @@ import time
 import os
 import logging
 
-logging.basicConfig(level=logging.INFO)
+
+logging.basicConfig(
+    format='%(levelname)s | %(message)s',
+    level=logging.INFO,
+)
 
 WAGGLE_NODE_ID = os.environ['WAGGLE_NODE_ID']
 WAGGLE_BEEHIVE_HOST = os.environ['WAGGLE_BEEHIVE_HOST']
@@ -127,23 +131,23 @@ def register_with_ssh_cert_server():
 def register_if_needed():
     # TODO check if credentials are valid
     if all(path.exists() for path in should_exist):
-        logging.info('credentials already exist. done!')
         return
 
-    logging.info('registering node %s on beehive %s',
+    logging.info('starting registration of node %s on beehive %s.',
                  WAGGLE_NODE_ID, WAGGLE_BEEHIVE_HOST)
 
     # TODO add support for using registration key
 
     if Path('/etc/waggle/register.pem').exists():
-        logging.info('will try registration key')
+        logging.info('registration key exists. registering over ssh.')
         register_with_ssh_cert_server()
     else:
         logging.warning(
-            'no registration key, falling back to local cert server.')
+            'registration key does not exist. falling back to local cert server.')
         register_with_local_cert_server()
 
-    logging.info('registration complete')
+    logging.info('finished registration of node %s on %s.',
+                 WAGGLE_NODE_ID, WAGGLE_BEEHIVE_HOST)
 
 
 def main():
