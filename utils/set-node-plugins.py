@@ -170,6 +170,7 @@ def generate_service_block(service):
         'image': service['image'],
         'restart': 'always',
         'networks': ['waggle'],
+        'env_file': ['waggle-node.env'],
         'environment': [
             "WAGGLE_PLUGIN_HOST=rabbitmq",
             "WAGGLE_PLUGIN_ID={plugin_id}".format(**service),
