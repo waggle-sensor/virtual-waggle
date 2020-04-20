@@ -61,3 +61,7 @@ Assuming you've already started a node environment, we'll schedule the single pl
 ```sh
 ./waggle-node schedule waggle/plugin-simple:0.1.0
 ```
+
+### Local Beehive Server
+
+To deploy a local [Beehive](https://github.com/waggle-sensor/beehive-server) for development, please refer to the [README](https://github.com/waggle-sensor/beehive-server/blob/master/README.md).
