@@ -82,6 +82,20 @@
             "durable": true,
             "auto_delete": false,
             "arguments": {}
+        },
+        {
+            "name": "resource-manager",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "ansible",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
         }
     ],
     "exchanges": [
@@ -143,6 +157,22 @@
             "destination": "forward-0000000000000004",
             "destination_type": "queue",
             "routing_key": "*.0000000000000004.#",
+            "arguments": {}
+        },
+        {
+            "source": "to-node",
+            "vhost": "/",
+            "destination": "resource-manager",
+            "destination_type": "queue",
+            "routing_key": "*.0000000000000000.resource-manager",
+            "arguments": {}
+        },
+        {
+            "source": "to-node",
+            "vhost": "/",
+            "destination": "ansible",
+            "destination_type": "queue",
+            "routing_key": "*.0000000000000000.ansible",
             "arguments": {}
         }
     ]

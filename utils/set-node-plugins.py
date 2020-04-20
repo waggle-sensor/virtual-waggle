@@ -80,7 +80,7 @@ def setup_rabbitmq_for_service(service):
 
         # add binding for nodeid prefix
         r = session.post(f'http://localhost:15672/api/bindings/%2f/e/to-node/q/{plugin_queue}', json={
-            'routing_key': f'{WAGGLE_NODE_ID}.{WAGGLE_SUB_ID}.{plugin_id}.{plugin_version}.{plugin_instance}'.format(**service),
+            'routing_key': f'{WAGGLE_NODE_ID}.{WAGGLE_SUB_ID}.plugin.{plugin_id}.{plugin_version}.{plugin_instance}'.format(**service),
         })
 
         assert r.status_code in [201, 204]
@@ -170,6 +170,7 @@ def generate_service_block(service):
         'image': service['image'],
         'restart': 'always',
         'networks': ['waggle'],
+        'env_file': ['waggle-node.env'],
         'environment': [
             "WAGGLE_PLUGIN_HOST=rabbitmq",
             "WAGGLE_PLUGIN_ID={plugin_id}".format(**service),
