@@ -25,8 +25,11 @@ The node configuration can be found in `waggle-node.env`. A typical configuratio
 ```bash
 WAGGLE_NODE_ID=0000000000000001
 WAGGLE_SUB_ID=0000000000000000
+
+# for local beehive, please use:
 WAGGLE_BEEHIVE_HOST=host.docker.internal
-# for actual deployment specify real hostname
+
+# for remote beehive, please use the hostname:
 # WAGGLE_BEEHIVE_HOST=beehive1.mcs.anl.gov
 ```
 
