@@ -1,5 +1,15 @@
 # Waggle Node Software
 
+```txt
++--------------+ +----------+ +----------+ +-----------+              +--------------------+
+| Registration | | Plugin 1 | | Plugin 2 | | Messaging | <----------> |   Beehive Server   |
++--------------+ +----------+ +----------+ +-----------+              +--------------------+
+              ↑ Waggle Node Software Stack ↑
++------------------------------------------------------+
+|                        Docker                        |
++------------------------------------------------------+
+```
+
 ## Specifying a Beehive Server
 
 The easiest way to get a complete environment running is to deploy a local [beehive](https://github.com/waggle-sensor/beehive-server) on the same machine as the node stack. Please refer to the [README](https://github.com/waggle-sensor/beehive-server/blob/master/README.md) to learn more.
