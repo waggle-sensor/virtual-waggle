@@ -1,5 +1,15 @@
 # Waggle Node Software
 
+## Interfacing with a Beehive Server
+
+The easiest way to get a complete environment running is to deploy a local [beehive](https://github.com/waggle-sensor/beehive-server) on the same machine as the node stack. Please refer to the [README](https://github.com/waggle-sensor/beehive-server/blob/master/README.md) to learn more.
+
+### Registration
+
+If you are developing entirely on a single machine, you will _not_ need a registration key. The registration service will automatically get credentials directly from the local beehive-server.
+
+If you are developing against a remote beehive-server, you will need to request a registration key from the beehive-server admin and add it to `private/register.pem` with `0600` permissions.
+
 ## Running Node Software Stack
 
 ### Requirements
@@ -19,12 +29,6 @@ WAGGLE_BEEHIVE_HOST=host.docker.internal
 # for actual deployment specify real hostname
 # WAGGLE_BEEHIVE_HOST=beehive1.mcs.anl.gov
 ```
-
-### Registration
-
-If you are developing entirely on a single machine, you will _not_ need a registration key. The registration service will automatically get credentials directly from the local beehive-server.
-
-If you are developing against a remote beehive-server, you will need to request a registration key from the beehive-server admin and add it to `private/register.pem` with `0600` permissions.
 
 ### Running the Node Environment
 
@@ -61,9 +65,3 @@ Assuming you've already started a node environment, we'll schedule the single pl
 ```sh
 ./waggle-node schedule waggle/plugin-simple:0.1.0
 ```
-
-## Interfacing with Beehive
-
-The easiest way to get a complete environment running is to deploy a local [beehive](https://github.com/waggle-sensor/beehive-server) on the same machine as the node stack. Please refer to the [README](https://github.com/waggle-sensor/beehive-server/blob/master/README.md) to learn more.
-
-_TODO: Add more info on interfacing with remote beehive server._
