@@ -1,6 +1,6 @@
 # Waggle Node Software
 
-## Running a test environment
+## Running Local Node Stack
 
 ### Requirements
 
@@ -62,6 +62,8 @@ Assuming you've already started a node environment, we'll schedule the single pl
 ./waggle-node schedule waggle/plugin-simple:0.1.0
 ```
 
-### Local Beehive Server
+## Interfacing with Beehive
 
-To deploy a local [Beehive](https://github.com/waggle-sensor/beehive-server) for development, please refer to the [README](https://github.com/waggle-sensor/beehive-server/blob/master/README.md).
+The easiest way to get a complete environment running is to deploy a local [beehive](https://github.com/waggle-sensor/beehive-server) on the same machine as the node stack. Please refer to the [README](https://github.com/waggle-sensor/beehive-server/blob/master/README.md) to learn more.
+
+_TODO: Add more info on interfacing with remote beehive server._
