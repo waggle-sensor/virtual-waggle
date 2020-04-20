@@ -78,3 +78,10 @@ Assuming you've already started a node environment, we'll schedule the single pl
 ```sh
 ./waggle-node schedule waggle/plugin-simple:0.1.0
 ```
+
+Now, we'll look at the logs one more time:
+
+```sh
+# view plugin related logs
+./waggle-node logs | grep plugin
+```
