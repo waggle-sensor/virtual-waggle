@@ -1,6 +1,6 @@
 # Waggle Node Software
 
-## Interfacing with a Beehive Server
+## Specifying a Beehive Server
 
 The easiest way to get a complete environment running is to deploy a local [beehive](https://github.com/waggle-sensor/beehive-server) on the same machine as the node stack. Please refer to the [README](https://github.com/waggle-sensor/beehive-server/blob/master/README.md) to learn more.
 
@@ -8,7 +8,7 @@ The easiest way to get a complete environment running is to deploy a local [beeh
 
 If you are developing entirely on a single machine, you will _not_ need a registration key. The registration service will automatically get credentials directly from the local beehive-server.
 
-If you are developing against a remote beehive-server, you will need to request a registration key from the beehive-server admin and add it to `private/register.pem` with `0600` permissions.
+If you are developing against a remote beehive server, you will need to request a registration key from the beehive-server admin and add it to `private/register.pem` with `0600` permissions. Please remember the hostname of this beehive server for use in the Configuration step later.
 
 ## Running Node Software Stack
 
