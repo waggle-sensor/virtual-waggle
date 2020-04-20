@@ -5,7 +5,7 @@
 ### Requirements
 
 * [Docker](https://docs.docker.com/install/)
-* [Docker Compose](https://docs.docker.com/compose/install/)
+* [Docker Compose](https://docs.docker.com/compose/install/) (Included with Docker Desktop for Mac / Windows)
 * Python 3
 
 ### Configuration
