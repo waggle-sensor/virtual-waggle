@@ -1,6 +1,6 @@
 # Waggle Node Software
 
-## Running Local Node Stack
+## Running Node Software Stack
 
 ### Requirements
 
