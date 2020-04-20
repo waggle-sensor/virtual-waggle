@@ -22,9 +22,9 @@ WAGGLE_BEEHIVE_HOST=host.docker.internal
 
 ### Registration
 
-If you have a registration key, it should be placed in `private/register.pem` and have `0600` permissions.
+If you are developing entirely on a single machine, you will _not_ need a registration key. The registration service will automatically get credentials directly from the local beehive-server.
 
-If you do not have a registration key, registration will fall back to directly querying a cert server. This behavior is generally only intended for local development when running a beehive server and node test environment on the same machine.
+If you are developing against a remote beehive-server, you will need to request a registration key from the beehive-server admin and add it to `private/register.pem` with `0600` permissions.
 
 ### Running the Node Environment
 
