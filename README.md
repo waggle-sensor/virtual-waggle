@@ -1,9 +1,9 @@
 # Waggle Node Software
 
 ```txt
-┌──────────────┐┌──────────┐┌──────────┐┌───────────┐              ┌────────────────┐
-│ Registration ││ Plugin 1 ││ Plugin 2 ││ Messaging │ <----------> │ Beehive Server │
-└──────────────┘└──────────┘└──────────┘└───────────┘              └────────────────┘
+┌──────────────┐┌──────────┐┌──────────┐┌───────────┐       ┌────────────────┐
+│ Registration ││ Plugin 1 ││ Plugin 2 ││ Messaging │ <───> │ Beehive Server │
+└──────────────┘└──────────┘└──────────┘└───────────┘       └────────────────┘
              ↑ Waggle Node Software Stack ↑
 ┌───────────────────────────────────────────────────┐
 │                     Docker                        │
@@ -16,7 +16,7 @@ The easiest way to get a complete environment running is to deploy a local [beeh
 
 ### Registration
 
-If you are developing entirely on a single machine, you will _not_ need a registration key. The registration service will automatically get credentials directly from the local beehive-server.
+If you are developing entirely on a single machine, you will _not_ need a registration key. The registration service will automatically get credentials directly from the local beehive-server. _This is primarily intended to be used for development, not a full deployment!_
 
 If you are developing against a remote beehive server, you will need to request a registration key from the beehive-server admin and add it to `private/register.pem` with `0600` permissions. Please remember the hostname of this beehive server for use in the Configuration step later.
 
