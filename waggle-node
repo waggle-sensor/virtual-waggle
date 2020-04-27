@@ -20,24 +20,25 @@ command_up() {
     done
 }
 
+cleanup_files() {
+    for path in $*; do
+        if [ -e "$path" ]; then
+            echo "Clean up $path"
+            rm $path
+        fi
+    done
+}
+
 command_down() {
     docker-compose $compose_file_args down --remove-orphans
-    
-    # cleanup plugins file
-    if [ -e "docker-compose.plugins.yml" ]; then
-        rm docker-compose.plugins.yml
-    fi
+    cleanup_files "docker-compose.plugins.yml" \
+                  "private/cacert.pem" \
+                  "private/cert.pem" \
+                  "private/key.pem"
 }
 
 command_logs() {
     docker-compose $compose_file_args logs --tail 100 -f
-}
-
-command_reset() {
-    command_down $@
-    rm docker-compose.plugins.yml
-    rm -rf private/
-    command_up $@
 }
 
 command_schedule() {
@@ -51,6 +52,5 @@ case "$command" in
     up) command_up $@ ;;
     down) command_down $@ ;;
     logs) command_logs $@ ;;
-    reset) command_reset $@ ;;
     schedule) command_schedule $@ ;;
 esac
