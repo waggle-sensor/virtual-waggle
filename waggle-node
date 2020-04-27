@@ -22,6 +22,7 @@ command_up() {
 
 command_down() {
     docker-compose $compose_file_args down --remove-orphans
+    test -e docker-compose.plugins.yml && rm docker-compose.plugins.yml
 }
 
 command_logs() {
