@@ -34,7 +34,8 @@ command_down() {
     cleanup_files "docker-compose.plugins.yml" \
                   "private/cacert.pem" \
                   "private/cert.pem" \
-                  "private/key.pem"
+                  "private/key.pem" \
+                  "private/reverse_ssh_port"
 }
 
 command_logs() {
