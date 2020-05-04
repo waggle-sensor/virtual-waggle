@@ -10,6 +10,11 @@
             "name": "worker",
             "password": "worker",
             "tags": ""
+        },
+        {
+            "name": "plugin-coresense-v1",
+            "password": "plugin-coresense-v1",
+            "tags": ""
         }
     ],
     "vhosts": [
@@ -31,6 +36,13 @@
             "configure": ".*",
             "write": ".*",
             "read": ".*"
+        },
+        {
+            "user": "plugin-coresense-v1",
+            "vhost": "/",
+            "configure": "data|data.fanout",
+            "write": "data|data.fanout",
+            "read": "^$"
         }
     ],
     "queues": [
@@ -100,6 +112,15 @@
     ],
     "exchanges": [
         {
+            "name": "data.fanout",
+            "vhost": "/",
+            "type": "fanout",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        },
+        {
             "name": "messages",
             "vhost": "/",
             "type": "fanout",
@@ -119,6 +140,14 @@
         }
     ],
     "bindings": [
+        {
+            "source": "data.fanout",
+            "vhost": "/",
+            "destination": "data",
+            "destination_type": "queue",
+            "routing_key": "",
+            "arguments": {}
+        },
         {
             "source": "messages",
             "vhost": "/",
