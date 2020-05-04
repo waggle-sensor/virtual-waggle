@@ -12,8 +12,8 @@
             "tags": ""
         },
         {
-            "name": "plugin-coresense-v1",
-            "password": "plugin-coresense-v1",
+            "name": "legacy-plugin",
+            "password": "legacy-plugin",
             "tags": ""
         }
     ],
@@ -38,7 +38,7 @@
             "read": ".*"
         },
         {
-            "user": "plugin-coresense-v1",
+            "user": "legacy-plugin",
             "vhost": "/",
             "configure": "data|data.fanout",
             "write": "data|data.fanout",
