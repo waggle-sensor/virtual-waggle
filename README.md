@@ -1,14 +1,25 @@
-# Waggle Node Software
+# Waggle Node Application Stack
+
+This repo contains the software components needed to run Waggle plugins. It is built on top of
+Docker which allows it to run on a variety of platforms.
+
+## Architecture Overview
 
 ```txt
 ┌──────────────┐┌──────────┐┌──────────┐┌───────────┐    ┆    ┌────────────────┐
 │ Registration ││ Plugin 1 ││ Plugin 2 ││ Messaging │ <──┆──> │ Beehive Server │
 └──────────────┘└──────────┘└──────────┘└───────────┘    ┆    └────────────────┘
-             ↑ Waggle Node Software Stack ↑              ┆
+            ↑ Waggle Node Application Stack ↑            ┆
 ┌───────────────────────────────────────────────────┐    ┆
 │                     Docker                        │    ┆
 └───────────────────────────────────────────────────┘    ┆
 ```
+
+## Requirements
+
+* [Docker](https://docs.docker.com/install/)
+* [Docker Compose](https://docs.docker.com/compose/install/) (Included with Docker Desktop for Mac / Windows)
+* Python 3
 
 ## Specifying a Beehive Server
 
@@ -20,13 +31,7 @@ If you are developing entirely on a single machine, you will _not_ need a regist
 
 If you are developing against a remote beehive server, you will need to request a registration key from the beehive-server admin and add it to `private/register.pem` with `0600` permissions. Please remember the hostname of this beehive server for use in the Configuration step later.
 
-## Running Node Software Stack
-
-### Requirements
-
-* [Docker](https://docs.docker.com/install/)
-* [Docker Compose](https://docs.docker.com/compose/install/) (Included with Docker Desktop for Mac / Windows)
-* Python 3
+## Running Node Application Stack
 
 ### Configuration
 
