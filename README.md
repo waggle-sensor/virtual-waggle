@@ -1,7 +1,8 @@
 # Waggle Node Application Stack
 
-This repo contains the software components needed to run Waggle plugins. It is built on top of
-Docker which allows it to run on a variety of platforms.
+This repo contains the software components needed to run Waggle plugins and publish data
+to a Beehive server. It is built on top of Docker which allows it to run on a variety
+of platforms.
 
 ## Architecture Overview
 
