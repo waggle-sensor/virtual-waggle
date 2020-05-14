@@ -40,8 +40,8 @@
         {
             "user": "legacy-plugin",
             "vhost": "/",
-            "configure": "data|data.fanout",
-            "write": "data|data.fanout",
+            "configure": "^data|data.fanout$",
+            "write": "^data|data.fanout$",
             "read": "^$"
         }
     ],
