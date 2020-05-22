@@ -73,6 +73,27 @@ To view logs from the node environment, you can use:
 ./waggle-node logs | grep plugin
 ```
 
+### Building Plugins
+
+To rebuild a plugin locally, you can run:
+
+```sh
+docker build -t waggle/plugin-simple:0.1.0 path/to/plugin-simple
+```
+
+where `waggle/plugin-simple:0.1.0` is the `organization/name:version` of my
+plugin and `path/to/plugin-simple` is the directory it lives in.
+
+### Publishing Plugins (Optional, Experimental)
+
+_This is under major development until the Sage ECR is in place. For now, we are using Dockerhub directly._
+
+_We we doing a multi-arch build here which requires using Docker experimental features._
+
+```sh
+docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 --push -t waggle/plugin-simple-detector:0.1.0 path/to/plugin-simple
+```
+
 ### Scheduling Plugins
 
 _This is under major development! It will eventually be handled by our resource manager, but for now we have some manual tools to handle this._
@@ -90,25 +111,4 @@ Now, we'll look at the logs one more time:
 ```sh
 # view plugin related logs
 ./waggle-node logs | grep plugin
-```
-
-### Building Plugins
-
-To rebuild a plugin locally, you can run:
-
-```sh
-docker build -t plugin-cool-detector:0.0.1 path/to/plugin
-```
-
-where `plugin-cool-detector:0.0.1` is the name and version of my plugin
-and `path/to/plugin` is the directory it lives in.
-
-### Publishing Plugins
-
-_This is under major development until the Sage ECR is in place. For now, we are using Dockerhub directly._
-
-_We we doing a multi-arch build here which requires using Docker experimental features._
-
-```sh
-docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 --push -t organization/plugin-cool-detector:0.0.1 path/to/plugin
 ```
