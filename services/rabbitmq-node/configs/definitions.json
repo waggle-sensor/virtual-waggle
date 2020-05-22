@@ -42,7 +42,7 @@
             "vhost": "/",
             "configure": "^data|data.fanout$",
             "write": "^data|data.fanout$",
-            "read": "^$"
+            "read": "^data|data.fanout$"
         }
     ],
     "queues": [
