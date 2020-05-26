@@ -1,0 +1,112 @@
+{
+    "rabbit_version": "3.6.16",
+    "users": [
+        {
+            "name": "admin",
+            "password": "admin",
+            "tags": "administrator"
+        },
+        {
+            "name": "worker",
+            "password": "worker",
+            "tags": ""
+        }
+    ],
+    "vhosts": [
+        {
+            "name": "/"
+        }
+    ],
+    "permissions": [
+        {
+            "user": "admin",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        },
+        {
+            "user": "worker",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        }
+    ],
+    "queues": [
+        {
+            "name": "messages",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "to-beehive",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "resource-manager",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "ansible",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        }
+    ],
+    "exchanges": [
+        {
+            "name": "messages",
+            "vhost": "/",
+            "type": "fanout",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        },
+        {
+            "name": "to-node",
+            "vhost": "/",
+            "type": "topic",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        }
+    ],
+    "bindings": [
+        {
+            "source": "messages",
+            "vhost": "/",
+            "destination": "messages",
+            "destination_type": "queue",
+            "routing_key": "messages",
+            "arguments": {}
+        },
+        {
+            "source": "to-node",
+            "vhost": "/",
+            "destination": "resource-manager",
+            "destination_type": "queue",
+            "routing_key": "*.0000000000000001.resource-manager",
+            "arguments": {}
+        },
+        {
+            "source": "to-node",
+            "vhost": "/",
+            "destination": "ansible",
+            "destination_type": "queue",
+            "routing_key": "*.0000000000000001.ansible",
+            "arguments": {}
+        }
+    ]
+}
