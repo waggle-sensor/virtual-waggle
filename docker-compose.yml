@@ -23,8 +23,8 @@ services:
       - waggle
     restart: on-failure
 
-  message-staging-node:
-    image: waggle/message-staging-node
+  stage-messages:
+    image: waggle/stage-messages
     env_file:
       - waggle-node.env
     volumes:
