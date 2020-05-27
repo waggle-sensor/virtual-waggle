@@ -13,6 +13,7 @@ else
 fi
 
 command_up() {
+    docker-compose $compose_file_args pull
     docker-compose $compose_file_args up --build -d --remove-orphans
 }
 

@@ -7,6 +7,10 @@ hostname=node50288
 # ssh $hostname docker build -t waggle/rabbitmq:nc /wagglerw/rabbitmq-node/
 
 ssh $hostname bash -c '
+docker pull waggle/rabbitmq:nc
+docker pull waggle/shovelctl
+docker pull waggle/plugin-metsense:4.1.0
+
 docker rm -f rabbitmq
 
 echo "starting rabbitmq permissions"
@@ -21,7 +25,7 @@ echo "fixing credential permissions"
 docker exec -i --user root rabbitmq bash -c "mkdir -p /etc/waggle; cp /run/waggle/* /etc/waggle/; chown -R rabbitmq:rabbitmq /etc/waggle"
 
 echo "setting up shovels"
-docker run -i --network waggle --rm -e WAGGLE_NODE_ID=0000001e06118459 -e WAGGLE_SUB_ID=0000000000000000 -e WAGGLE_BEEHIVE_HOST=140.221.47.67 waggle/shovelctl python3 /app/shovelctl.py enable
+docker run -i --network waggle --rm -e WAGGLE_NODE_ID=0000001e06118459 -e WAGGLE_SUB_ID=0000000000000000 -e WAGGLE_BEEHIVE_HOST=140.221.47.67 waggle/shovelctl enable
 
 echo "starting metsense plugin"
 docker rm -f plugin-metsense
