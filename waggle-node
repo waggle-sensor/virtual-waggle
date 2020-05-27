@@ -14,10 +14,6 @@ fi
 
 command_up() {
     docker-compose $compose_file_args up --build -d --remove-orphans
-
-    while ! python3 utils/shovelctl.py enable; do
-        sleep 3
-    done
 }
 
 cleanup_files() {
