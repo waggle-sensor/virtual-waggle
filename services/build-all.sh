@@ -6,6 +6,6 @@ build_service() {
 
 build_service waggle/rabbitmq:nc rabbitmq-nc
 build_service waggle/rabbitmq:ep rabbitmq-ep
-build_service waggle/message-staging-node:nc message-staging-node-nc
+build_service waggle/message-staging-node message-staging-node-nc
 build_service waggle/shovelctl shovelctl
 build_service waggle/registration registration
