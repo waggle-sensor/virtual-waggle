@@ -39,7 +39,7 @@ services:
       - waggle-node.env
     networks:
       - waggle
-    command: python3 /app/shovelctl.py enable
+    command: enable
 
 networks:
   waggle:
