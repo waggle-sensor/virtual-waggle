@@ -1,10 +1,6 @@
 #!/bin/bash
-# TODO add restart policy
 
 hostname=node50288
-
-# rsync -av /Users/sean/waggle-node/services/rabbitmq-node/ $hostname:/wagglerw/rabbitmq-node/
-# ssh $hostname docker build -t waggle/rabbitmq:nc /wagglerw/rabbitmq-node/
 
 ssh $hostname bash -c '
 docker pull waggle/rabbitmq:nc

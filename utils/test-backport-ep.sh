@@ -26,6 +26,7 @@ docker run -d \
   --device /dev/waggle_cam_bottom \
   --name cam_bottom_live \
   waggle/plugin-media-streaming:0.1.0 \
+  -verbose \
   -f v4l2 \
   -input_format mjpeg \
   -video_size 640*480 \
@@ -33,11 +34,13 @@ docker run -d \
   -c:v libx264
 
 
-while ! docker exec -it rabbitmq rabbitmqctl add_user "plugin-50-1.0.0-0" "worker"; do
+# current plugin path assumes rabbitmq has a user for each plugin. we manually create this here.
+# this needs to be revisited again!
+while ! docker exec -i rabbitmq rabbitmqctl add_user "plugin-50-1.0.0-0" "worker"; do
   sleep 3
 done
 
-docker exec -it rabbitmq rabbitmqctl set_permissions "plugin-50-1.0.0-0" ".*" ".*" ".*"
+docker exec -i rabbitmq rabbitmqctl set_permissions "plugin-50-1.0.0-0" ".*" ".*" ".*"
 
 docker run -d \
   --restart always \
@@ -53,8 +56,3 @@ docker run -d \
   -e WAGGLE_PLUGIN_PASSWORD=worker \
   waggle/plugin-carped:1.0.0
 '
-
-# todo: just predefine the plugin user for the aot nodes...
-# we'll work out the final configuration approach later...
-# error: carped produces messages too fast!!!
-# error: missing user ID
