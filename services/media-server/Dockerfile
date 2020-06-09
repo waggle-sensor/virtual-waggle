@@ -7,4 +7,4 @@ FROM alpine:latest
 COPY --from=builder /build/media-server /media-server
 EXPOSE 5000
 ENTRYPOINT [ "/media-server" ]
-CMD [ "-root", "/data" ]
+CMD [ "-data", "/data" ]
