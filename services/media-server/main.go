@@ -26,5 +26,5 @@ func main() {
 
 	log.Printf("serving data from %s", *dataDir)
 	os.Chdir(*dataDir)
-	log.Fatal(http.ListenAndServe(":5000", nil))
+	log.Fatal(http.ListenAndServe(":8090", nil))
 }

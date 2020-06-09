@@ -5,6 +5,6 @@ RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /build/media-server
 
 FROM alpine:latest
 COPY --from=builder /build/media-server /media-server
-EXPOSE 5000
+EXPOSE 8090
 ENTRYPOINT [ "/media-server" ]
 CMD [ "-data", "/data" ]
