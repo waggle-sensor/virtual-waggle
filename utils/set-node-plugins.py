@@ -88,7 +88,7 @@ def setup_rabbitmq_for_service(service):
 
 def get_plugin_id_for_image(image):
     output = subprocess.check_output(
-        ['docker', 'run', '--rm', image, 'printenv', 'WAGGLE_PLUGIN_ID'])
+        ['docker', 'run', '--rm', '--entrypoint', 'printenv', image, 'WAGGLE_PLUGIN_ID'])
     return int(output)
 
 
