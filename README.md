@@ -98,7 +98,7 @@ docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 --push -t wa
 
 _This is under major development! It will eventually be handled by our resource manager, but for now we have some manual tools to handle this._
 
-_Additionally, it's likely that plugins will eventually be kept in the [ECR](https://github.com/sagecontinuum/ecr) and available across platforms. For now, when testing on my laptop I've had to manually build docker images from the [edge-plugins](https://github.com/waggle-sensor/edge-plugins) repo._
+_Additionally, it's likely that plugins will eventually be kept in the [ECR](https://github.com/sagecontinuum/ecr) and available across platforms. For now, when testing on my laptop I've had to manually build docker images from the [edge-plugins](https://github.com/waggle-sensor/edge-plugins) repo. For now, plugins are being submitted to the [Waggle Dockerhub](https://hub.docker.com/orgs/waggle/repositories)._
 
 Assuming you've already started a node environment, we'll schedule the single plugin `waggle/plugin-simple:0.1.0`.
 
