@@ -60,8 +60,8 @@ WAGGLE_BEEHIVE_HOST=host.docker.internal
 # For single machine option on Linux, please use the IP address, please use:
 WAGGLE_BEEHIVE_HOST=172.17.0.1
 
-# for remote beehive, please use the hostname:
-# WAGGLE_BEEHIVE_HOST=beehive1.mcs.anl.gov
+# For remote beehive option, please use the remote hostname:
+WAGGLE_BEEHIVE_HOST=beehive1.mcs.anl.gov
 ```
 
 Known Issue: We are working on a solution to unify the Docker Desktop and Docker on Linux configurations for single machine deployments. On Linux, we are explicitly required to set WAGGLE_BEEHIVE_HOST to the Docker network bridge IP address. This can be found using `docker network inspect bridge | grep Gateway`.
