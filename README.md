@@ -36,7 +36,9 @@ If you are developing entirely on a single machine, then you'll need to generate
 ssh-keygen -f ssh/id_rsa_waggle_aot_registration -N ''
 ```
 
-Copy the `ssh/id_rsa_waggle_aot_registration` file to your virtual waggle directory at `private/register.pem` with `0600` permissions. You are now ready to deploy beehive and virtual waggle together.
+Copy the `ssh/id_rsa_waggle_aot_registration` file to your virtual waggle directory at `private/register.pem` with `0600` permissions.
+
+You are now ready to deploy beehive and virtual waggle together.
 
 ### Registration - Remove Beehive Option
 
