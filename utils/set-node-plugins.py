@@ -81,7 +81,7 @@ def setup_rabbitmq_for_service(service):
 
         # add binding for nodeid prefix
         r = session.post(f'http://localhost:15672/api/bindings/%2f/e/to-node/q/{plugin_queue}', json={
-            'routing_key': f'{WAGGLE_NODE_ID}.{WAGGLE_SUB_ID}.plugin.{plugin_id}.{plugin_version}.{plugin_instance}'.format(**service),
+            'routing_key': '{WAGGLE_NODE_ID}.{WAGGLE_SUB_ID}.plugin.{plugin_id}.{plugin_version}.{plugin_instance}'.format(WAGGLE_NODE_ID=WAGGLE_NODE_ID, WAGGLE_SUB_ID=WAGGLE_SUB_ID, **service),
         })
 
         assert r.status_code in [201, 204]
@@ -112,13 +112,7 @@ def get_plugin_labels_for_image(image, domain):
     return [label.split('=')[1] for label in output.decode().strip().split(',') if domain in label]
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('plugins', nargs='*')
-args = parser.parse_args()
-
-services = []
-
-for plugin in args.plugins:
+def get_plugin_service(plugin):
     plugin_id = get_plugin_id_for_image(plugin)
     plugin_version = get_plugin_version_for_image(plugin)
     plugin_instance = 0
@@ -126,7 +120,7 @@ for plugin in args.plugins:
     username = f'plugin-{plugin_id}-{plugin_version}-{plugin_instance}'
     password = generate_random_password()
 
-    service = {
+    return {
         'image': plugin,
         'name': username,
         'plugin_id': plugin_id,
@@ -134,18 +128,9 @@ for plugin in args.plugins:
         'plugin_instance': plugin_instance,
         'plugin_username': username,
         'plugin_password': password,
+        'plugin_devices': get_plugin_labels_for_image(plugin, 'waggle.devices'),
+        'plugin_volumes': get_plugin_labels_for_image(plugin, 'waggle.volumes'),
     }
-    devices = get_plugin_labels_for_image(plugin, "waggle.devices")
-    volumes = get_plugin_labels_for_image(plugin, "waggle.volumes")
-    service.update({
-        'plugin_devices': devices,
-        'plugin_volumes': volumes
-    })
-    services.append(service)
-
-
-for service in services:
-    setup_rabbitmq_for_service(service)
 
 
 def generate_compose_for_services(services):
@@ -156,7 +141,7 @@ def generate_compose_for_services(services):
 
 
 def generate_services_block(services):
-    return {service['name']: generate_service_block(service)}
+    return {service['name']: generate_service_block(service) for service in services}
 
 
 def generate_service_block(service):
@@ -184,15 +169,31 @@ def generate_volumes_block(service):
     )
 
 
-with open('docker-compose.plugins.yml', 'w') as file:
-    json.dump(generate_compose_for_services(services), file, indent=True)
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('plugins', nargs='*')
+    args = parser.parse_args()
 
-# update running services
-subprocess.check_call([
-    'docker-compose',
-    '-f', 'docker-compose.yml',
-    '-f', 'docker-compose.plugins.yml',
-    'up',
-    '-d',
-    '--remove-orphans',  # removes plugins no longer enabled
-])
+    services = [get_plugin_service(plugin) for plugin in args.plugins]
+
+    for service in services:
+        setup_rabbitmq_for_service(service)
+
+    with open('docker-compose.plugins.yml', 'w') as file:
+        json.dump(generate_compose_for_services(services), file, indent=True)
+
+    print('updated docker-compose.plugins.yml')
+
+    # update running services
+    subprocess.check_call([
+        'docker-compose',
+        '-f', 'docker-compose.yml',
+        '-f', 'docker-compose.plugins.yml',
+        'up',
+        '-d',
+        '--remove-orphans',  # removes plugins no longer enabled
+    ])
+
+
+if __name__ == '__main__':
+    main()
