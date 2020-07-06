@@ -179,7 +179,6 @@ def generate_service_block(service):
 
 def generate_volumes_block(service):
     return (
-        ["${{WAGGLE_ETC_ROOT}}/plugins/{plugin_username}/plugin.credentials:/plugin/plugin.credentials:ro".format(**service)] +
         ['{0}:{0}'.format(device) for device in service['plugin_devices']] +
         ['{0}:{0}'.format(device) for device in service['plugin_volumes']]
     )
