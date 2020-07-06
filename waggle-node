@@ -36,7 +36,7 @@ command_down() {
 }
 
 command_logs() {
-    docker-compose $compose_file_args logs --tail 100 -f
+    docker-compose $compose_file_args logs --tail 100 -f $@
 }
 
 command_schedule() {
@@ -44,7 +44,7 @@ command_schedule() {
 }
 
 command_run() {
-    command_schedule $(python3 utils/build-plugin.py $@)
+    command_logs $(command_schedule $(python3 utils/build-plugin.py $@))
 }
 
 command="$1"

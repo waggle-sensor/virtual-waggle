@@ -182,8 +182,6 @@ def main():
     with open('docker-compose.plugins.yml', 'w') as file:
         json.dump(generate_compose_for_services(services), file, indent=True)
 
-    print('updated docker-compose.plugins.yml')
-
     # update running services
     subprocess.check_call([
         'docker-compose',
@@ -193,6 +191,9 @@ def main():
         '-d',
         '--remove-orphans',  # removes plugins no longer enabled
     ])
+
+    # expected output is single line containing all service names
+    print(*[service['name'] for service in services])
 
 
 if __name__ == '__main__':
