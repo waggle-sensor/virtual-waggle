@@ -26,9 +26,19 @@ of platforms.
 
 The easiest way to get a complete environment running for development is to deploy a local [beehive](https://github.com/waggle-sensor/beehive-server) on the same machine as the node stack. Please refer to the [README](https://github.com/waggle-sensor/beehive-server/blob/master/README.md) to learn more.
 
-### Registration
+In order to complete the end-to-end data pipeline, virtual waggle must register with a beehive server. For guidance, please read either the single machine deployment or remote beehive deploy steps below.
 
-If you are developing entirely on a single machine, you will _not_ need a registration key. The registration service will automatically get credentials directly from the local beehive-server. _This is primarily intended to be used for development, not a full deployment!_
+### Registration - Single Machine Option
+
+If you are developing entirely on a single machine, then you'll need to generate a registration key pair _before_ deploying beehive. First, go to the directory you cloned `beehive-server` and run:
+
+```sh
+ssh-keygen -f ssh/id_rsa_waggle_aot_registration -N ''
+```
+
+Now, copy `ssh/id_rsa_waggle_aot_registration` to your virtual waggle directory at `private/register.pem` with `0600` permissions.
+
+### Registration - Remove Beehive Option
 
 If you are developing against a remote beehive server, you will need to request a registration key from the beehive-server admin and add it to `private/register.pem` with `0600` permissions. Please remember the hostname of this beehive server for use in the Configuration step later.
 
