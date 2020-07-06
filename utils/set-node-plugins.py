@@ -87,19 +87,18 @@ def setup_rabbitmq_for_service(service):
         assert r.status_code in [201, 204]
 
 
-def get_docker_label(image, name):
-    return subprocess.check_output([
-        'docker',
-        'inspect',
-        '--format', f'{{ index .Config.Labels "{name}"}}',
-        name,
-    ])
+def get_docker_image_label(image, label):
+    output = subprocess.check_output([
+        'docker', 'inspect', '--format', f'{{{{ index .Config.Labels "{label}" }}}}', image])
+    return output.decode().strip()
 
 
 def get_plugin_id_for_image(image):
-    output = subprocess.check_output(
-        ['docker', 'run', '--rm', '--entrypoint', 'printenv', image, 'WAGGLE_PLUGIN_ID'])
-    return int(output)
+    return int(get_docker_image_label(image, 'waggle.plugin.id'))
+
+
+def get_plugin_version_for_image(image):
+    return get_docker_image_label(image, 'waggle.plugin.version')
 
 
 def get_plugin_labels_for_image(image, domain):
@@ -120,27 +119,12 @@ args = parser.parse_args()
 services = []
 
 for plugin in args.plugins:
-    match = re.match(r'plugin-(\S+):(\S+)', plugin.split('/')[-1])
-    plugin_name = match.group(1)
-    plugin_version = match.group(2)
-
-    try:
-        plugin_id = get_plugin_id_for_image(plugin)
-    except Exception:
-        print(f'Missing WAGGLE_PLUGIN_ID for plugin {plugin}')
-        sys.exit(1)
-
+    plugin_id = get_plugin_id_for_image(plugin)
+    plugin_version = get_plugin_version_for_image(plugin)
     plugin_instance = 0
 
     username = f'plugin-{plugin_id}-{plugin_version}-{plugin_instance}'
     password = generate_random_password()
-
-    Path('private', 'plugins', username).mkdir(parents=True, exist_ok=True)
-    Path('private', 'plugins', username, 'plugin.credentials').write_text(f'''
-    [credentials]
-    username={username}
-    password={password}
-    '''.strip())
 
     service = {
         'image': plugin,
