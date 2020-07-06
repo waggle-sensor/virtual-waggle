@@ -43,6 +43,10 @@ command_schedule() {
     python3 utils/set-node-plugins.py $@
 }
 
+command_run() {
+    command_schedule $(python3 utils/build-plugin.py $@)
+}
+
 command="$1"
 shift
 
@@ -51,4 +55,5 @@ case "$command" in
     down) command_down $@ ;;
     logs) command_logs $@ ;;
     schedule) command_schedule $@ ;;
+    run) command_run $@ ;;
 esac

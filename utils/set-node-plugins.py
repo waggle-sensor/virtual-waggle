@@ -11,6 +11,7 @@ import subprocess
 import json
 import sys
 
+
 WAGGLE_NODE_ID = os.environ['WAGGLE_NODE_ID'].lower()
 WAGGLE_SUB_ID = os.environ['WAGGLE_SUB_ID'].lower()
 
@@ -84,6 +85,15 @@ def setup_rabbitmq_for_service(service):
         })
 
         assert r.status_code in [201, 204]
+
+
+def get_docker_label(image, name):
+    return subprocess.check_output([
+        'docker',
+        'inspect',
+        '--format', f'{{ index .Config.Labels "{name}"}}',
+        name,
+    ])
 
 
 def get_plugin_id_for_image(image):
