@@ -93,14 +93,6 @@ def get_docker_image_label(image, label):
     return output.decode().strip()
 
 
-def get_plugin_id_for_image(image):
-    return int(get_docker_image_label(image, 'waggle.plugin.id'))
-
-
-def get_plugin_version_for_image(image):
-    return get_docker_image_label(image, 'waggle.plugin.version')
-
-
 def get_plugin_labels_for_image(image, domain):
     output = subprocess.check_output([
         'docker',
@@ -113,8 +105,9 @@ def get_plugin_labels_for_image(image, domain):
 
 
 def get_plugin_service(plugin):
-    plugin_id = get_plugin_id_for_image(plugin)
-    plugin_version = get_plugin_version_for_image(plugin)
+    plugin_id = int(get_docker_image_label(plugin, 'waggle.plugin.id'))
+    plugin_version = get_docker_image_label(plugin, 'waggle.plugin.version')
+    plugin_name = get_docker_image_label(plugin, 'waggle.plugin.name')
     plugin_instance = 0
 
     username = f'plugin-{plugin_id}-{plugin_version}-{plugin_instance}'
@@ -122,7 +115,7 @@ def get_plugin_service(plugin):
 
     return {
         'image': plugin,
-        'name': username,
+        'name': f'plugin-{plugin_name}-{plugin_version}',
         'plugin_id': plugin_id,
         'plugin_version': plugin_version,
         'plugin_instance': plugin_instance,

@@ -19,6 +19,7 @@ for plugin in args.plugins:
         'build',
         '--label', 'waggle.plugin.id={id}'.format(**config),
         '--label', 'waggle.plugin.version={version}'.format(**config),
+        '--label', 'waggle.plugin.name={name}'.format(**config),
         '-t', image_name,
         plugin,
     ])

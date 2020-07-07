@@ -44,7 +44,7 @@ command_schedule() {
 }
 
 command_run() {
-    command_logs $(command_schedule $(python3 utils/build-plugin.py $@))
+    command_schedule $(python3 utils/build-plugin.py $@)
 }
 
 command="$1"
