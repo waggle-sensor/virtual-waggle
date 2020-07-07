@@ -20,7 +20,7 @@ of platforms.
 
 * [Docker](https://docs.docker.com/install/)
 * [Docker Compose](https://docs.docker.com/compose/install/) (Included with Docker Desktop for Mac / Windows)
-* Python 3
+* Python 3.6 and above
 
 ## Specifying a Beehive Server
 
