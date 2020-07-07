@@ -86,47 +86,16 @@ To view logs from the node environment, you can use:
 # view all logs, including node system services
 ./waggle-node logs
 
-# view plugin related logs
-./waggle-node logs | grep plugin
+# view logs from just plugins
+./waggle-node logs | awk '$1 ~ /plugin/'
 ```
 
-### Building Plugins
+### Runnning Plugins
 
-To rebuild a plugin locally, you can run:
+Assuming you've already started a node environment, plugins can be run using:
 
 ```sh
-docker build -t waggle/plugin-simple:0.1.0 path/to/plugin-simple
+./waggle-node run path/to/plugin1 path/to/plugin2 ...
 ```
 
-where `waggle/plugin-simple:0.1.0` is the `organization/name:version` of my
-plugin and `path/to/plugin-simple` is the directory it lives in.
-
-### Publishing Plugins (Optional, Experimental)
-
-_This is under major development until the Sage ECR is in place. For now, we are using Dockerhub directly._
-
-_We we doing a multi-arch build here which requires using Docker experimental features._
-
-```sh
-docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 --push -t waggle/plugin-simple-detector:0.1.0 path/to/plugin-simple
-```
-
-### Scheduling Plugins
-
-_This is under major development! It will eventually be handled by our resource manager, but for now we have some manual tools to handle this._
-
-_Additionally, it's likely that plugins will eventually be kept in the [ECR](https://github.com/sagecontinuum/ecr) and available across platforms. For now, when testing on my laptop I've had to manually build docker images from the [edge-plugins](https://github.com/waggle-sensor/edge-plugins) repo. For now, plugins are being submitted to the [Waggle Dockerhub](https://hub.docker.com/orgs/waggle/repositories) and
-[Sage Dockerhub](https://hub.docker.com/orgs/sagecontinuum/repositories)._
-
-Assuming you've already started a node environment, we'll schedule the single plugin `waggle/plugin-simple:0.1.0`.
-
-```sh
-./waggle-node schedule waggle/plugin-simple:0.1.0
-```
-
-Now, we'll look at the logs one more time:
-
-```sh
-# view plugin related logs
-./waggle-node logs | grep plugin
-```
+This will rebuild and run each plugin, then attach to the logs.
