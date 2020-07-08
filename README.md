@@ -95,7 +95,23 @@ To view logs from the node environment, you can use:
 Assuming you've already started a node environment, plugins can be run using:
 
 ```sh
-./waggle-node run path/to/plugin1 path/to/plugin2 ...
+./waggle-node run path/to/plugin
 ```
 
-This will rebuild and run each plugin, then attach to the logs.
+This will rebuild and run each plugin, then attach to the logs. For example, if I run out simple example plugin locally, I should get:
+
+```sh
+$ ./waggle-node run ~/edge-plugins/plugin-simple
+Recreating waggle-node_plugin-simple-0.2.0_1 ...
+Starting waggle-node_shovelctl_1             ...
+waggle-node_rabbitmq_1 is up-to-date
+Recreating waggle-node_plugin-simple-0.2.0_1 ... done
+Starting waggle-node_shovelctl_1             ... done
+Attaching to waggle-node_plugin-simple-0.2.0_1
+plugin-simple-0.2.0_1  | adding measurement 0.5695579684099324
+plugin-simple-0.2.0_1  | adding measurement 0.8156233806673034
+plugin-simple-0.2.0_1  | adding measurement 0.3259056117698298
+plugin-simple-0.2.0_1  | adding measurement 0.49872677077787086
+plugin-simple-0.2.0_1  | adding measurement 0.4603942610417787
+...
+```
