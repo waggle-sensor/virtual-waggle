@@ -21,6 +21,15 @@ except FileNotFoundError:
 
 image_name = 'plugin-{name}:{version}'.format(**config)
 
+# check for expected fields
+missing_keys = {'id', 'version', 'name'} - set(config.keys())
+
+if missing_keys:
+    print('error: sage.json is missing fields:')
+    for k in missing_keys:
+        print(f'{k}')
+    sys.exit(1)
+
 subprocess.check_output([
     'docker',
     'build',
