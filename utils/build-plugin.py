@@ -5,19 +5,22 @@ from pathlib import Path
 import sys
 
 
+def fatal(*args, **kwargs):
+    print(*args, **kwargs, file=sys.stderr)
+    sys.exit(1)
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument('plugin_dir', type=Path)
 args = parser.parse_args()
 
 if not args.plugin_dir.is_dir():
-    print('error: argument must point to base directory of a plugin')
-    sys.exit(1)
+    fatal('error: argument must point to base directory of a plugin')
 
 try:
     config = json.loads((args.plugin_dir / 'sage.json').read_text())
 except FileNotFoundError:
-    print('error: plugin is missing sage.json metadata file')
-    sys.exit(1)
+    fatal('error: plugin is missing sage.json metadata file')
 
 image_name = 'plugin-{name}:{version}'.format(**config)
 
@@ -25,10 +28,7 @@ image_name = 'plugin-{name}:{version}'.format(**config)
 missing_keys = {'id', 'version', 'name'} - set(config.keys())
 
 if missing_keys:
-    print('error: sage.json is missing fields:')
-    for k in missing_keys:
-        print(f'{k}')
-    sys.exit(1)
+    fatal('error: sage.json is missing fields', missing_keys)
 
 subprocess.check_output([
     'docker',

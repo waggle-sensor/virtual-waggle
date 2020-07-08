@@ -44,9 +44,9 @@ command_schedule() {
 }
 
 command_run() {
-    if dockerImage=$(command_schedule $(python3 utils/build-plugin.py $@)); then
-        command_logs $dockerImage
-    fi
+    docker_image=$(python3 utils/build-plugin.py $@)
+    command_schedule $docker_image
+    command_logs $docker_image
 }
 
 command="$1"
