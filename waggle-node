@@ -44,9 +44,9 @@ command_schedule() {
 }
 
 command_run() {
-    docker_image=$(python3 utils/build-plugin.py $@)
-    command_schedule $docker_image
-    command_logs $docker_image
+    image=$(python3 utils/build-plugin.py $@)
+    container=$(command_schedule $image)
+    command_logs $container
 }
 
 command="$1"
