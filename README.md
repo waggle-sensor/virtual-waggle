@@ -92,13 +92,13 @@ To view logs from the node environment, you can use:
 
 ### Runnning Plugins
 
-Assuming you've already started a node environment, plugins can be run using:
+Once you've run `./waggle-node up`, you're ready to start running plugins. This can be done with the `run` command:
 
 ```sh
 ./waggle-node run path/to/plugin
 ```
 
-This will rebuild and run each plugin, then attach to the logs. For example, if I run out simple example plugin locally, I should get:
+This command rebuilds a plugin, runs it, then attach to the logs. For example, if I run out simple example plugin locally, I should get:
 
 ```sh
 $ ./waggle-node run ~/edge-plugins/plugin-simple
@@ -115,3 +115,6 @@ plugin-simple-0.2.0_1  | adding measurement 0.49872677077787086
 plugin-simple-0.2.0_1  | adding measurement 0.4603942610417787
 ...
 ```
+
+Development Note: Plugins currently remain running in the backgroud after CTRL-C'ing. It in undecided if we'd like to follow
+a similar approach to Docker where users can explicitly provide a `-d` detach flag.
