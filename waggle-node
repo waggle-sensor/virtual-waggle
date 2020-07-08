@@ -46,7 +46,13 @@ command_schedule() {
 command_run() {
     image=$(python3 utils/build-plugin.py $@)
     container=$(command_schedule $image)
-    command_logs $container
+
+    while ! docker-compose $compose_file_args logs $container &> /dev/null; do
+        echo "Waiting for $container..."
+        sleep 1
+    done
+
+    docker-compose $compose_file_args logs -f $container
 }
 
 command="$1"
