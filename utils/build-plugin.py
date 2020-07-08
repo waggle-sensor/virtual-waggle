@@ -6,15 +6,15 @@ import sys
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('plugin_dir')
+parser.add_argument('plugin_dir', type=Path)
 args = parser.parse_args()
 
-if not Path(args.plugin_dir).is_dir():
+if not args.plugin_dir.is_dir():
     print('error: argument must point to base directory of a plugin')
     sys.exit(1)
 
 try:
-    config = json.loads(Path(args.plugin_dir, 'sage.json').read_text())
+    config = json.loads((args.plugin_dir / 'sage.json').read_text())
 except FileNotFoundError:
     print('error: plugin is missing sage.json metadata file')
     sys.exit(1)
@@ -37,7 +37,7 @@ subprocess.check_output([
     '--label', 'waggle.plugin.version={version}'.format(**config),
     '--label', 'waggle.plugin.name={name}'.format(**config),
     '-t', image_name,
-    args.plugin_dir,
+    str(args.plugin_dir),
 ])
 
 print(image_name)
