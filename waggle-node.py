@@ -110,7 +110,24 @@ def setup_rabbitmq_user(args, username, password):
     ], capture_output=True)
 
 
+def has_plugin(plugin):
+    try:
+        subprocess.run(['docker', 'inspect', plugin],
+                       check=True, capture_output=True)
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+
 def command_run(args):
+    if not has_plugin(args.plugin):
+        print(
+            f'Did not find plugin {args.plugin} locally. Pulling from remote...')
+        try:
+            subprocess.check_call(['docker', 'pull', args.plugin])
+        except subprocess.CalledProcessError:
+            fatal(f'Failed to pull plugin {args.plugin}')
+
     plugin_id = int(get_docker_image_label(args.plugin, 'waggle.plugin.id'))
     plugin_version = get_docker_image_label(
         args.plugin, 'waggle.plugin.version')
