@@ -17,15 +17,15 @@ def fatal(*args, **kwargs):
 
 
 def command_up(args):
+    print('Starting Virtual Waggle...')
+
     volume = os.path.join(os.getcwd(), 'private')
 
     network = f'{args.project}.waggle'
 
-    print('setting up network')
     subprocess.run([
         'docker', 'network', 'create', network], capture_output=True)
 
-    print('setting up rabbitmq')
     subprocess.run([
         'docker', 'run', '-d',
         '--name', f'{args.project}.rabbitmq',
@@ -37,7 +37,6 @@ def command_up(args):
         'waggle/rabbitmq:nc',
     ], capture_output=True)
 
-    print('setting up registration')
     subprocess.run([
         'docker', 'run', '-d',
         '--name', f'{args.project}.registration',
@@ -50,6 +49,8 @@ def command_up(args):
 
 
 def command_down(args):
+    print('Stopping Virtual Waggle...')
+
     # get all process IDs for this VW
     ids = subprocess.check_output(
         ['docker', 'ps', '-q', '-a', '-f', f'name={args.project}.']).decode().split()
@@ -118,7 +119,7 @@ def command_run(args):
     plugin_username = f'plugin-{plugin_id}-{plugin_version}-{plugin_instance}'
     plugin_password = generate_random_password()
 
-    print(f'Setting up credentials for {args.plugin}')
+    print(f'Setting up {args.plugin}')
     setup_rabbitmq_user(args, plugin_username, plugin_password)
 
     network = f'{args.project}.waggle'
