@@ -24,7 +24,7 @@ of platforms.
 
 ## Specifying a Beehive Server (Optional)
 
-Virtual Waggle can run without connecting to a Beehive Server. If you only want to work on plugins, you can skip ahead to "Running Node Application Stack".
+Virtual Waggle can run without connecting to a Beehive Server. If you only want to work on plugins, you can skip ahead to "Setting up Virtual Waggle Environment".
 
 The easiest way to get a complete environment running for development is to deploy a local [beehive](https://github.com/waggle-sensor/beehive-server) on the same machine as the node stack. Please refer to the [README](https://github.com/waggle-sensor/beehive-server/blob/master/README.md) to learn more.
 
