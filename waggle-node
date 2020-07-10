@@ -17,15 +17,18 @@ def fatal(*args, **kwargs):
 
 
 def command_up(args):
-    subprocess.check_call(['docker-compose', 'up', '-d'])
+    subprocess.check_call(
+        ['docker-compose', '-p', args.project_name, 'up', '-d'])
 
 
 def command_down(args):
-    subprocess.check_call(['docker-compose', 'down', '--remove-orphans'])
+    subprocess.check_call(
+        ['docker-compose', '-p', args.project_name, 'down', '--remove-orphans'])
 
 
 def command_logs(args):
-    subprocess.run(['docker-compose', 'logs', '-f'])
+    subprocess.run(
+        ['docker-compose', '-p', args.project_name, 'logs', '-f'])
 
 
 def generate_random_password():
