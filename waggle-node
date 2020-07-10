@@ -16,6 +16,10 @@ def fatal(*args, **kwargs):
     sys.exit(1)
 
 
+def run_quiet(*args, **kwargs):
+    return subprocess.run(*args, **kwargs, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
 def command_up(args):
     subprocess.check_call(
         ['docker-compose', '-p', args.project_name, 'up', '-d'])
@@ -48,23 +52,23 @@ def get_docker_image_labels(image):
 
 
 def setup_rabbitmq_user(args, username, password):
-    subprocess.run([
+    run_quiet([
         'docker-compose', 'exec', 'rabbitmq',
         'rabbitmqctl',
         'add_user',
         username,
         password,
-    ], capture_output=True)
+    ])
 
-    subprocess.run([
+    run_quiet([
         'docker-compose', 'exec', 'rabbitmq',
         'rabbitmqctl',
         'change_password',
         username,
         password,
-    ], capture_output=True)
+    ])
 
-    subprocess.run([
+    run_quiet([
         'docker-compose', 'exec', 'rabbitmq',
         'rabbitmqctl',
         'set_permissions',
@@ -72,16 +76,15 @@ def setup_rabbitmq_user(args, username, password):
         '.*',
         '.*',
         '.*',
-    ], capture_output=True)
+    ])
 
 
 def has_plugin(plugin):
     try:
-        subprocess.run(['docker', 'inspect', plugin],
-                       check=True, capture_output=True)
+        run_quiet(['docker', 'inspect', plugin], check=True)
         return True
     except subprocess.CalledProcessError:
-        return False
+        return Falses
 
 
 def command_run(args):
@@ -109,7 +112,7 @@ def command_run(args):
     network = f'{args.project_name}_waggle'
     name = f'{args.project_name}_plugin-{plugin_name}-{plugin_version}-{plugin_instance}'
 
-    subprocess.run(['docker', 'rm', '-f', name], capture_output=True)
+    run_quiet(['docker', 'rm', '-f', name])
 
     try:
         print(f'Running {args.plugin}\n')
@@ -129,7 +132,7 @@ def command_run(args):
         ])
     finally:
         print(f'Cleaning up {args.plugin}')
-        subprocess.run(['docker', 'rm', '-f', name], capture_output=True)
+        run_quiet(['docker', 'rm', '-f', name])
 
 
 def command_build(args):
