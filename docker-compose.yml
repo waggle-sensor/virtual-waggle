@@ -5,8 +5,6 @@ services:
     image: waggle/rabbitmq:nc
     env_file:
       - waggle-node.env
-    ports:
-      - "127.0.0.1:15672:15672"
     volumes:
       - "${WAGGLE_ETC_ROOT}:/etc/waggle:ro"
     networks:

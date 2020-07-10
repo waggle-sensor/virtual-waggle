@@ -17,50 +17,15 @@ def fatal(*args, **kwargs):
 
 
 def command_up(args):
-    print('Starting Virtual Waggle...')
-
-    volume = os.path.join(os.getcwd(), 'private')
-
-    network = f'{args.project}.waggle'
-
-    subprocess.run([
-        'docker', 'network', 'create', network], capture_output=True)
-
-    subprocess.run([
-        'docker', 'run', '-d',
-        '--name', f'{args.project}.rabbitmq',
-        '--network', network,
-        '--network-alias', 'rabbitmq',
-        '--env-file', 'waggle-node.env',
-        '--restart', 'always',
-        '-v', f'{volume}:/etc/waggle:ro',
-        'waggle/rabbitmq:nc',
-    ], capture_output=True)
-
-    subprocess.run([
-        'docker', 'run', '-d',
-        '--name', f'{args.project}.registration',
-        '--network', network,
-        '--env-file', 'waggle-node.env',
-        '--restart', 'on-failure',
-        '-v', f'{volume}:/etc/waggle',
-        'waggle/registration',
-    ], capture_output=True)
+    subprocess.check_call(['docker-compose', 'up', '-d'])
 
 
 def command_down(args):
-    print('Stopping Virtual Waggle...')
-
-    # get all process IDs for this VW
-    ids = subprocess.check_output(
-        ['docker', 'ps', '-q', '-a', '-f', f'name={args.project}.']).decode().split()
-    # remove all process for IDs
-    subprocess.run(['docker', 'rm', '-f'] + ids, capture_output=True)
+    subprocess.check_call(['docker-compose', 'down', '--remove-orphans'])
 
 
 def command_logs(args):
-    subprocess.run([
-        'docker', 'logs', '-f', f'{args.project}.rabbitmq', f'{args.project}.registration'])
+    subprocess.run(['docker-compose', 'logs', '-f'])
 
 
 def generate_random_password():
@@ -84,7 +49,7 @@ def get_docker_image_label(image, label):
 
 def setup_rabbitmq_user(args, username, password):
     subprocess.run([
-        'docker', 'exec', f'{args.project}.rabbitmq',
+        'docker-compose', 'exec', 'rabbitmq',
         'rabbitmqctl',
         'add_user',
         username,
@@ -92,7 +57,7 @@ def setup_rabbitmq_user(args, username, password):
     ], capture_output=True)
 
     subprocess.run([
-        'docker', 'exec', f'{args.project}.rabbitmq',
+        'docker-compose', 'exec', 'rabbitmq',
         'rabbitmqctl',
         'change_password',
         username,
@@ -100,7 +65,7 @@ def setup_rabbitmq_user(args, username, password):
     ], capture_output=True)
 
     subprocess.run([
-        'docker', 'exec', f'{args.project}.rabbitmq',
+        'docker-compose', 'exec', 'rabbitmq',
         'rabbitmqctl',
         'set_permissions',
         username,
@@ -140,7 +105,7 @@ def command_run(args):
     print(f'Setting up {args.plugin}')
     setup_rabbitmq_user(args, plugin_username, plugin_password)
 
-    network = f'{args.project}.waggle'
+    network = f'{args.project}_waggle'
     name = f'{args.project}.{plugin_name}-{plugin_version}-{plugin_instance}'
 
     subprocess.run(['docker', 'rm', '-f', name], capture_output=True)
@@ -217,10 +182,10 @@ def main():
         'down', help='Shutdown Virtual Waggle stack.')
     parser_down.set_defaults(func=command_down)
 
-    # parser_logs = subparsers.add_parser('logs')
-    # parser_logs.add_argument('-f', action='store_true', help='follow logs')
-    # parser_logs.add_argument('plugin', help='plugin to')
-    # parser_logs.set_defaults(func=command_logs)
+    parser_logs = subparsers.add_parser(
+        'logs', help='Attach to Virtual Waggle logs.')
+    parser_logs.add_argument('-f', action='store_true', help='follow logs')
+    parser_logs.set_defaults(func=command_logs)
 
     parser_build = subparsers.add_parser(
         'build', help='Builds a plugin for Virtual Waggle from a directory.')
