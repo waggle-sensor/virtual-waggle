@@ -39,12 +39,9 @@ def generate_random_password():
 #     return b64encode(salt + sha256(salt + data).digest()).decode()
 
 
-def get_docker_image_label(image, label):
-    return subprocess.check_output([
-        'docker',
-        'inspect',
-        '--format', f'{{{{ index .Config.Labels "{label}" }}}}',
-        image]).decode().strip()
+def get_docker_image_labels(image):
+    results = json.loads(subprocess.check_output(['docker', 'inspect', image]))
+    return {k: v for r in results for k, v in r['ContainerConfig']['Labels'].items()}
 
 
 def setup_rabbitmq_user(args, username, password):
@@ -93,10 +90,11 @@ def command_run(args):
         except subprocess.CalledProcessError:
             fatal(f'Failed to pull plugin {args.plugin}')
 
-    plugin_id = int(get_docker_image_label(args.plugin, 'waggle.plugin.id'))
-    plugin_version = get_docker_image_label(
-        args.plugin, 'waggle.plugin.version')
-    plugin_name = get_docker_image_label(args.plugin, 'waggle.plugin.name')
+    labels = get_docker_image_labels(args.plugin)
+
+    plugin_id = int(labels['waggle.plugin.id'])
+    plugin_version = labels['waggle.plugin.version']
+    plugin_name = labels['waggle.plugin.name']
     plugin_instance = 0
     plugin_username = f'plugin-{plugin_id}-{plugin_version}-{plugin_instance}'
     plugin_password = generate_random_password()
@@ -169,10 +167,11 @@ def command_build(args):
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.set_defaults(func=None)
     parser.add_argument('-p', '--project',
                         default=os.path.basename(os.getcwd()), help='project')
 
-    subparsers = parser.add_subparsers()
+    subparsers = parser.add_subparsers(help='Virtual Waggle Commands')
 
     parser_up = subparsers.add_parser(
         'up', help='Startup Virtual Waggle stack.')
@@ -200,7 +199,11 @@ def main():
     parser_run.set_defaults(func=command_run)
 
     args = parser.parse_args()
-    args.func(args)
+
+    if args.func:
+        args.func(args)
+    else:
+        parser.print_help()
 
 
 if __name__ == '__main__':
