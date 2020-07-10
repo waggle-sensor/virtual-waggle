@@ -118,8 +118,7 @@ def command_run(args):
     plugin_username = f'plugin-{plugin_id}-{plugin_version}-{plugin_instance}'
     plugin_password = generate_random_password()
 
-    print(f'setting up plugin {args.plugin}')
-
+    print(f'Setting up credentials for {args.plugin}')
     setup_rabbitmq_user(args, plugin_username, plugin_password)
 
     network = f'{args.project}.waggle'
@@ -128,7 +127,7 @@ def command_run(args):
     subprocess.run(['docker', 'rm', '-f', name], capture_output=True)
 
     try:
-        print(f'running plugin {args.plugin}')
+        print(f'Running {args.plugin}\n')
 
         subprocess.run([
             'docker', 'run', '-it',
@@ -144,7 +143,7 @@ def command_run(args):
             args.plugin,
         ])
     finally:
-        print(f'cleaning up plugin {args.plugin}')
+        print(f'Cleaning up {args.plugin}')
         subprocess.run(['docker', 'rm', '-f', name], capture_output=True)
 
 
@@ -165,7 +164,7 @@ def command_build(args):
     if missing_keys:
         fatal('error: sage.json is missing fields', missing_keys)
 
-    subprocess.check_output([
+    subprocess.run([
         'docker',
         'build',
         '--label', 'waggle.plugin.id={id}'.format(**config),
@@ -173,7 +172,7 @@ def command_build(args):
         '--label', 'waggle.plugin.name={name}'.format(**config),
         '-t', image_name,
         str(args.plugin_dir),
-    ])
+    ], stdout=sys.stderr, stderr=sys.stderr)
 
     print(image_name)
 
