@@ -90,31 +90,57 @@ To view logs from the node environment, you can use:
 ./waggle-node logs | awk '$1 ~ /plugin/'
 ```
 
-### Runnning Plugins
+### Building and Running Plugins
 
-Once you've run `./waggle-node up`, you're ready to start running plugins. This can be done with the `run` command:
+Once you've run `./waggle-node up`, you're ready to start working on plugins using the `build` and `run` commands:
+
+* The `build` command accepts a plugin directory and outputs the name of the plugin that was built.
+
+* The `run` command accepts a plugin and runs it inside the Virutal Waggle environment.
+
+In a typical development process, you'll combine these to build and run a plugin as follows:
 
 ```sh
-./waggle-node run path/to/plugin
+./waggle-node run $(./waggle-node build ~/edge-plugins/plugin-simple)
 ```
 
-This command rebuilds a plugin, runs it, then attach to the logs. For example, if I run out simple example plugin locally, I should get:
-
 ```sh
-$ ./waggle-node run ~/edge-plugins/plugin-simple
-Recreating waggle-node_plugin-simple-0.2.0_1 ...
-Starting waggle-node_shovelctl_1             ...
-waggle-node_rabbitmq_1 is up-to-date
-Recreating waggle-node_plugin-simple-0.2.0_1 ... done
-Starting waggle-node_shovelctl_1             ... done
-Attaching to waggle-node_plugin-simple-0.2.0_1
-plugin-simple-0.2.0_1  | adding measurement 0.5695579684099324
-plugin-simple-0.2.0_1  | adding measurement 0.8156233806673034
-plugin-simple-0.2.0_1  | adding measurement 0.3259056117698298
-plugin-simple-0.2.0_1  | adding measurement 0.49872677077787086
-plugin-simple-0.2.0_1  | adding measurement 0.4603942610417787
+Sending build context to Docker daemon  9.728kB
+Step 1/9 : FROM waggle/plugin-base:0.1.0
+ ---> ea69e837abcc
+Step 2/9 : COPY /plugin/requirements.txt /plugin/requirements.txt
+ ---> Using cache
+ ---> 935d669532c1
+Step 3/9 : RUN pip3 install -r /plugin/requirements.txt
+ ---> Using cache
+ ---> 9bb4fbe7af74
+Step 4/9 : COPY /plugin /plugin
+ ---> Using cache
+ ---> afde4ca6c137
+Step 5/9 : WORKDIR /plugin/plugin_bin
+ ---> Using cache
+ ---> a4fb92940ba3
+Step 6/9 : CMD ["./plugin_node"]
+ ---> Using cache
+ ---> 2cddfae8e4ae
+Step 7/9 : LABEL waggle.plugin.id=100
+ ---> Using cache
+ ---> 91793681c0df
+Step 8/9 : LABEL waggle.plugin.name=simple
+ ---> Using cache
+ ---> 1df87a316682
+Step 9/9 : LABEL waggle.plugin.version=0.2.0
+ ---> Using cache
+ ---> a69156c63abb
+Successfully built a69156c63abb
+Successfully tagged plugin-simple:0.2.0
+Setting up plugin-simple:0.2.0
+Running plugin-simple:0.2.0
+
+adding measurement 0.946405801897217
+adding measurement 0.7775963052387123
+adding measurement 0.41189924821227397
+adding measurement 0.3047326389740709
+adding measurement 0.006611365595469376
 ...
 ```
-
-Development Note: Plugins currently remain running in the backgroud after CTRL-C'ing. It in undecided if we'd like to follow
-a similar approach to Docker where users can explicitly provide a `-d` detach flag.

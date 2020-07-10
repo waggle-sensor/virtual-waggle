@@ -103,8 +103,8 @@ def command_run(args):
     print(f'Setting up {args.plugin}')
     setup_rabbitmq_user(args, plugin_username, plugin_password)
 
-    network = f'{args.project}_waggle'
-    name = f'{args.project}_plugin-{plugin_name}-{plugin_version}-{plugin_instance}'
+    network = f'{args.project_name}_waggle'
+    name = f'{args.project_name}_plugin-{plugin_name}-{plugin_version}-{plugin_instance}'
 
     subprocess.run(['docker', 'rm', '-f', name], capture_output=True)
 
@@ -168,6 +168,8 @@ def command_build(args):
 def main():
     parser = argparse.ArgumentParser()
     parser.set_defaults(func=lambda args: parser.print_help())
+    parser.add_argument('-p', '--project-name',
+                        default=os.path.basename(os.getcwd()), help='specify project name (default: directory name)')
 
     subparsers = parser.add_subparsers()
 
