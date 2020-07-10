@@ -12,8 +12,11 @@ else
     compose_file_args='-f docker-compose.yml'
 fi
 
+command_pull() {
+    docker-compose pull
+}
+
 command_up() {
-    docker-compose $compose_file_args pull
     docker-compose $compose_file_args up --build -d --remove-orphans
 }
 
@@ -59,6 +62,7 @@ command="$1"
 shift
 
 case "$command" in
+    pull) command_pull ;;
     up) command_up $@ ;;
     down) command_down $@ ;;
     logs) command_logs $@ ;;
