@@ -141,3 +141,9 @@ adding measurement 0.3047326389740709
 adding measurement 0.006611365595469376
 ...
 ```
+
+You can also run remote plugins from the ECR with `run`. For example:
+
+```sh
+./waggle-node run waggle/plugin-simple:0.2.0
+```
