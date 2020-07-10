@@ -106,7 +106,7 @@ def command_run(args):
     setup_rabbitmq_user(args, plugin_username, plugin_password)
 
     network = f'{args.project}_waggle'
-    name = f'{args.project}.{plugin_name}-{plugin_version}-{plugin_instance}'
+    name = f'{args.project}_plugin-{plugin_name}-{plugin_version}-{plugin_instance}'
 
     subprocess.run(['docker', 'rm', '-f', name], capture_output=True)
 
@@ -183,7 +183,7 @@ def main():
     parser_down.set_defaults(func=command_down)
 
     parser_logs = subparsers.add_parser(
-        'logs', help='Attach to Virtual Waggle logs.')
+        'logs', help='Attach to Virtual Waggle system logs.')
     parser_logs.add_argument('-f', action='store_true', help='follow logs')
     parser_logs.set_defaults(func=command_logs)
 
