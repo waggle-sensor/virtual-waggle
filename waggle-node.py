@@ -164,9 +164,15 @@ def command_build(args):
     if missing_keys:
         fatal('error: sage.json is missing fields', missing_keys)
 
+    user_args = []
+
+    for a in args.build_arg:
+        user_args += ['--build-arg', a]
+
     subprocess.run([
         'docker',
         'build',
+        *user_args,
         '--label', 'waggle.plugin.id={id}'.format(**config),
         '--label', 'waggle.plugin.version={version}'.format(**config),
         '--label', 'waggle.plugin.name={name}'.format(**config),
@@ -196,6 +202,7 @@ def main():
     parser_logs.set_defaults(func=command_logs)
 
     parser_build = subparsers.add_parser('build')
+    parser_build.add_argument('--build-arg', action='append', default=[])
     parser_build.add_argument(
         'plugin_dir', type=Path, help='base directory of plugin to build')
     parser_build.set_defaults(func=command_build)
