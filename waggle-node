@@ -190,7 +190,7 @@ def main():
     parser_logs.set_defaults(func=command_logs)
 
     parser_build = subparsers.add_parser(
-        'build', help='build plugin for Virtual Waggle from a directory')
+        'build', help='build plugin for virtual waggle from a directory')
     parser_build.add_argument('--build-arg', action='append', default=[])
     parser_build.add_argument(
         'plugin_dir', type=Path, help='base directory of plugin to build')
