@@ -20,7 +20,7 @@ of platforms.
 
 * [Docker](https://docs.docker.com/install/)
 * [Docker Compose](https://docs.docker.com/compose/install/) (Included with Docker Desktop for Mac / Windows)
-* Python 3
+* Python 3.6 and above
 
 ## Specifying a Beehive Server
 
@@ -66,67 +66,84 @@ WAGGLE_BEEHIVE_HOST=beehive1.mcs.anl.gov
 
 Known Issue: We are working on a solution to unify the Docker Desktop and Docker on Linux configurations for single machine deployments. On Linux, we are explicitly required to set WAGGLE_BEEHIVE_HOST to the Docker network bridge IP address. This can be found using `docker network inspect bridge | grep Gateway`.
 
-### Running the Node Environment
+### Setting up Virtual Waggle Environment
 
-To start the node environment, run:
+In order to run plugins, you need to ensure all the Virtual Waggle environment is running. To do this, run:
 
 ```sh
 ./waggle-node up
 ```
 
-To stop the node environment, run:
+When you're done, you can cleanup the Virtual Waggle environment by running:
 
 ```sh
 ./waggle-node down
 ```
 
-To view logs from the node environment, you can use:
+### Building and Running Plugins
+
+Once you've run `./waggle-node up`, you're ready to start working on plugins using the `build` and `run` commands:
+
+* The `build` command accepts a plugin directory and outputs the name of the plugin that was built.
+
+* The `run` command accepts a plugin and runs it inside the Virutal Waggle environment.
+
+In a typical development process, you'll combine these to build and run a plugin as follows:
 
 ```sh
-# view all logs, including node system services
-./waggle-node logs
-
-# view plugin related logs
-./waggle-node logs | grep plugin
+./waggle-node run $(./waggle-node build path/to/plugin)
 ```
 
-### Building Plugins
-
-To rebuild a plugin locally, you can run:
+As a concrete example, if I want to clone the edge plugins repo and try out the simple plugin:
 
 ```sh
-docker build -t waggle/plugin-simple:0.1.0 path/to/plugin-simple
+git clone https://github.com/waggle-sensor/edge-plugins
+./waggle-node run $(./waggle-node build ./edge-plugins/plugin-simple)
 ```
 
-where `waggle/plugin-simple:0.1.0` is the `organization/name:version` of my
-plugin and `path/to/plugin-simple` is the directory it lives in.
-
-### Publishing Plugins (Optional, Experimental)
-
-_This is under major development until the Sage ECR is in place. For now, we are using Dockerhub directly._
-
-_We we doing a multi-arch build here which requires using Docker experimental features._
-
 ```sh
-docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 --push -t waggle/plugin-simple-detector:0.1.0 path/to/plugin-simple
+Sending build context to Docker daemon  9.728kB
+Step 1/9 : FROM waggle/plugin-base:0.1.0
+ ---> ea69e837abcc
+Step 2/9 : COPY /plugin/requirements.txt /plugin/requirements.txt
+ ---> Using cache
+ ---> 935d669532c1
+Step 3/9 : RUN pip3 install -r /plugin/requirements.txt
+ ---> Using cache
+ ---> 9bb4fbe7af74
+Step 4/9 : COPY /plugin /plugin
+ ---> Using cache
+ ---> afde4ca6c137
+Step 5/9 : WORKDIR /plugin/plugin_bin
+ ---> Using cache
+ ---> a4fb92940ba3
+Step 6/9 : CMD ["./plugin_node"]
+ ---> Using cache
+ ---> 2cddfae8e4ae
+Step 7/9 : LABEL waggle.plugin.id=100
+ ---> Using cache
+ ---> 91793681c0df
+Step 8/9 : LABEL waggle.plugin.name=simple
+ ---> Using cache
+ ---> 1df87a316682
+Step 9/9 : LABEL waggle.plugin.version=0.2.0
+ ---> Using cache
+ ---> a69156c63abb
+Successfully built a69156c63abb
+Successfully tagged plugin-simple:0.2.0
+Setting up plugin-simple:0.2.0
+Running plugin-simple:0.2.0
+
+adding measurement 0.946405801897217
+adding measurement 0.7775963052387123
+adding measurement 0.41189924821227397
+adding measurement 0.3047326389740709
+adding measurement 0.006611365595469376
+...
 ```
 
-### Scheduling Plugins
-
-_This is under major development! It will eventually be handled by our resource manager, but for now we have some manual tools to handle this._
-
-_Additionally, it's likely that plugins will eventually be kept in the [ECR](https://github.com/sagecontinuum/ecr) and available across platforms. For now, when testing on my laptop I've had to manually build docker images from the [edge-plugins](https://github.com/waggle-sensor/edge-plugins) repo. For now, plugins are being submitted to the [Waggle Dockerhub](https://hub.docker.com/orgs/waggle/repositories) and
-[Sage Dockerhub](https://hub.docker.com/orgs/sagecontinuum/repositories)._
-
-Assuming you've already started a node environment, we'll schedule the single plugin `waggle/plugin-simple:0.1.0`.
+You can also run remote plugins from the ECR with `run`. For example:
 
 ```sh
-./waggle-node schedule waggle/plugin-simple:0.1.0
-```
-
-Now, we'll look at the logs one more time:
-
-```sh
-# view plugin related logs
-./waggle-node logs | grep plugin
+./waggle-node run waggle/plugin-simple:0.2.0
 ```
