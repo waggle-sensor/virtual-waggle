@@ -66,28 +66,18 @@ WAGGLE_BEEHIVE_HOST=beehive1.mcs.anl.gov
 
 Known Issue: We are working on a solution to unify the Docker Desktop and Docker on Linux configurations for single machine deployments. On Linux, we are explicitly required to set WAGGLE_BEEHIVE_HOST to the Docker network bridge IP address. This can be found using `docker network inspect bridge | grep Gateway`.
 
-### Running the Node Environment
+### Setting up Virtual Waggle Environment
 
-To start the node environment, run:
+In order to run plugins, you need to ensure all the Virtual Waggle environment is running. To do this, run:
 
 ```sh
 ./waggle-node up
 ```
 
-To stop the node environment, run:
+When you're done, you can cleanup the Virtual Waggle environment by running:
 
 ```sh
 ./waggle-node down
-```
-
-To view logs from the node environment, you can use:
-
-```sh
-# view all logs, including node system services
-./waggle-node logs
-
-# view logs from just plugins
-./waggle-node logs | awk '$1 ~ /plugin/'
 ```
 
 ### Building and Running Plugins
