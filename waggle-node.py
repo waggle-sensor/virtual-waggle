@@ -190,24 +190,28 @@ def main():
 
     subparsers = parser.add_subparsers()
 
-    parser_up = subparsers.add_parser('up')
+    parser_up = subparsers.add_parser(
+        'up', help='Startup Virtual Waggle stack.')
     parser_up.set_defaults(func=command_up)
 
-    parser_down = subparsers.add_parser('down')
+    parser_down = subparsers.add_parser(
+        'down', help='Shutdown Virtual Waggle stack.')
     parser_down.set_defaults(func=command_down)
 
-    parser_logs = subparsers.add_parser('logs')
-    parser_logs.add_argument('-f', action='store_true', help='follow logs')
-    parser_logs.add_argument('plugin', help='plugin to')
-    parser_logs.set_defaults(func=command_logs)
+    # parser_logs = subparsers.add_parser('logs')
+    # parser_logs.add_argument('-f', action='store_true', help='follow logs')
+    # parser_logs.add_argument('plugin', help='plugin to')
+    # parser_logs.set_defaults(func=command_logs)
 
-    parser_build = subparsers.add_parser('build')
+    parser_build = subparsers.add_parser(
+        'build', help='Builds a plugin for Virtual Waggle from a directory.')
     parser_build.add_argument('--build-arg', action='append', default=[])
     parser_build.add_argument(
         'plugin_dir', type=Path, help='base directory of plugin to build')
     parser_build.set_defaults(func=command_build)
 
-    parser_run = subparsers.add_parser('run')
+    parser_run = subparsers.add_parser(
+        'run', help='Runs a plugin inside Virtual Waggle environment.')
     parser_run.add_argument('plugin', help='plugin to run')
     parser_run.set_defaults(func=command_run)
 
