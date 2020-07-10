@@ -91,7 +91,14 @@ Once you've run `./waggle-node up`, you're ready to start working on plugins usi
 In a typical development process, you'll combine these to build and run a plugin as follows:
 
 ```sh
-./waggle-node run $(./waggle-node build ~/edge-plugins/plugin-simple)
+./waggle-node run $(./waggle-node build path/to/plugin)
+```
+
+As a concrete example, if I want to clone the edge plugins repo and try out the simple plugin:
+
+```sh
+git clone https://github.com/waggle-sensor/edge-plugins
+./waggle-node run $(./waggle-node build ./edge-plugins/plugin-simple)
 ```
 
 ```sh
