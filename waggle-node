@@ -167,7 +167,7 @@ def command_build(args):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.set_defaults(func=None)
+    parser.set_defaults(func=lambda args: parser.print_help())
 
     subparsers = parser.add_subparsers()
 
@@ -197,11 +197,7 @@ def main():
     parser_run.set_defaults(func=command_run)
 
     args = parser.parse_args()
-
-    if args.func:
-        args.func(args)
-    else:
-        parser.print_help()
+    args.func(args)
 
 
 if __name__ == '__main__':
