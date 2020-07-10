@@ -22,7 +22,9 @@ of platforms.
 * [Docker Compose](https://docs.docker.com/compose/install/) (Included with Docker Desktop for Mac / Windows)
 * Python 3.6 and above
 
-## Specifying a Beehive Server
+## Specifying a Beehive Server (Optional)
+
+Virtual Waggle can run without connecting to a Beehive Server, if you only want to work on plugins, you can skip ahead to "Running Node Application Stack".
 
 The easiest way to get a complete environment running for development is to deploy a local [beehive](https://github.com/waggle-sensor/beehive-server) on the same machine as the node stack. Please refer to the [README](https://github.com/waggle-sensor/beehive-server/blob/master/README.md) to learn more.
 
