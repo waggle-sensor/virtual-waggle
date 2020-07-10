@@ -84,7 +84,7 @@ def has_plugin(plugin):
         run_quiet(['docker', 'inspect', plugin], check=True)
         return True
     except subprocess.CalledProcessError:
-        return Falses
+        return False
 
 
 def command_run(args):
