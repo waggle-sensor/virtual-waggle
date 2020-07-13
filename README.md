@@ -149,3 +149,24 @@ You can also run remote plugins from the ECR with `run`. For example:
 ```sh
 ./waggle-node run waggle/plugin-simple:0.2.0
 ```
+
+### Starting a New Plugin
+
+A plugin template can be generated using the `newplugin` command as follows:
+
+```sh
+./waggle-node newplugin name
+```
+
+This will create a plugin directory named `plugin-name` which will contain:
+
+* plugin.py - main code file
+* requirements.txt - python dependencies
+* Dockerfile - build steps
+* sage.json - metadata file
+
+Going back to the section, this can be built and run using:
+
+```sh
+./waggle-node run $(./waggle-node build plugin-name)
+```
