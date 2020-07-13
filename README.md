@@ -150,9 +150,9 @@ You can also run remote plugins from the ECR with `run`. For example:
 ./waggle-node run waggle/plugin-simple:0.2.0
 ```
 
-### Starting a New Plugin
+### Creating a New Plugin
 
-A plugin template can be generated using the `newplugin` command as follows:
+A new plugin outline can be generated using the `newplugin` command as follows:
 
 ```sh
 ./waggle-node newplugin name
