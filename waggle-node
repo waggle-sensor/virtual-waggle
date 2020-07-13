@@ -10,6 +10,10 @@ import sys
 from pathlib import Path
 import json
 import re
+from shutil import copytree
+
+TEMPLATE_DIR = Path(sys.argv[0]).parent / 'templates'
+TEMPLATE_NAMES = [p.name for p in TEMPLATE_DIR.glob('*/')]
 
 
 def fatal(*args, **kwargs):
@@ -173,29 +177,6 @@ def command_build(args):
     print(image_name)
 
 
-dockerfile_template = '''FROM waggle/plugin-base:0.1.0
-COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
-COPY . .
-CMD ["python3", "plugin.py"]
-'''
-
-
-plugin_template = '''from waggle.plugin import Plugin
-from time import sleep
-
-plugin = Plugin()
-
-while True:
-    print('publishing')
-    plugin.add_measurement({'id': 1, 'sub_id': 1, 'value': 12.34})
-    plugin.publish_measurements()
-    sleep(1)
-'''
-
-requirements_template = '''git+https://github.com/waggle-sensor/pywaggle@v0.30.0
-'''
-
 sage_json_template = '''{{
     "architecture": [
         "linux/amd64",
@@ -224,12 +205,13 @@ def command_new_plugin(args):
         fatal(f'plugin names can only contain lowercase letters, numbers, _ and -.')
 
     plugin_dir = Path(f'plugin-{args.name}')
-    plugin_dir.mkdir(exist_ok=True)
+
+    try:
+        copytree(TEMPLATE_DIR / args.template, plugin_dir)
+    except FileExistsError:
+        fatal(f'warning: plugin directory {plugin_dir} already exists')
 
     (plugin_dir / 'sage.json').write_text(sage_json_template.format(name=args.name))
-    (plugin_dir / 'Dockerfile').write_text(dockerfile_template)
-    (plugin_dir / 'requirements.txt').write_text(requirements_template)
-    (plugin_dir / 'plugin.py').write_text(plugin_template)
 
 
 def main():
@@ -265,10 +247,12 @@ def main():
     parser_run.add_argument('plugin', help='plugin to run')
     parser_run.set_defaults(func=command_run)
 
-    parser_run = subparsers.add_parser(
+    parser_new_plugin = subparsers.add_parser(
         'newplugin', help='generates a new plugin')
-    parser_run.add_argument('name', help='name of plugin')
-    parser_run.set_defaults(func=command_new_plugin)
+    parser_new_plugin.add_argument(
+        '-t', '--template', default='simple', choices=TEMPLATE_NAMES, help='plugin template to use')
+    parser_new_plugin.add_argument('name', help='name of plugin')
+    parser_new_plugin.set_defaults(func=command_new_plugin)
 
     args = parser.parse_args()
     args.func(args)
