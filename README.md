@@ -42,7 +42,7 @@ Copy the `ssh/id_rsa_waggle_aot_registration` file to your virtual waggle direct
 
 You are now ready to deploy beehive and virtual waggle together.
 
-### Registration - Remove Beehive Option
+### Registration - Remote Beehive Option
 
 If you are developing against a remote beehive server, you will need to request a registration key from the beehive-server admin and add it to `private/register.pem` with `0600` permissions. Please remember the hostname of this beehive server for use in the Configuration step later.
 
