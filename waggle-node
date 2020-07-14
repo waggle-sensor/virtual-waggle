@@ -214,6 +214,16 @@ def command_new_plugin(args):
     (plugin_dir / 'sage.json').write_text(sage_json_template.format(name=args.name))
 
 
+def command_report(args):
+    print('=== RabbitMQ Queue Status ===')
+    subprocess.run(['docker-compose', 'exec', 'rabbitmq',
+                    'rabbitmqctl', 'list_queues'])
+    print()
+    print('=== RabbitMQ Shovel Status ===')
+    subprocess.run(['docker-compose', 'exec', 'rabbitmq',
+                    'rabbitmqctl', 'eval', 'rabbit_shovel_status:status().'])
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.set_defaults(func=lambda args: parser.print_help())
@@ -234,6 +244,10 @@ def main():
         'logs', help='show virtual waggle system logs')
     parser_logs.add_argument('-f', action='store_true', help='follow logs')
     parser_logs.set_defaults(func=command_logs)
+
+    parser_report = subparsers.add_parser(
+        'report', help='show virtual waggle system report for debugging')
+    parser_report.set_defaults(func=command_report)
 
     parser_build = subparsers.add_parser(
         'build', help='build plugin for virtual waggle from a directory')
