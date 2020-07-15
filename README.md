@@ -172,3 +172,10 @@ Going back to the section, this can be built and run using:
 ```sh
 ./waggle-node run $(./waggle-node build plugin-name)
 ```
+
+### Debugging (Optional)
+
+The `report` command can be used to quickly get some internal status of VW. For now, this provides:
+
+* Status of RabbitMQ Queues
+* Status of RabbitMQ Shovels
