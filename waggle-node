@@ -30,9 +30,21 @@ def command_up(args):
         ['docker-compose', '-p', args.project_name, 'up', '-d'])
 
 
+def remove_file_if_exists(path):
+    try:
+        path.unlink()
+        print(f'Cleaned up {path}')
+    except FileNotFoundError:
+        pass
+
+
 def command_down(args):
     subprocess.check_call(
         ['docker-compose', '-p', args.project_name, 'down', '--remove-orphans'])
+    remove_file_if_exists(Path('private/key.pem'))
+    remove_file_if_exists(Path('private/cert.pem'))
+    remove_file_if_exists(Path('private/cacert.pem'))
+    remove_file_if_exists(Path('private/reverse_ssh_port'))
 
 
 def command_logs(args):
