@@ -35,6 +35,8 @@ In order to complete the end-to-end data pipeline, virtual waggle must register 
 If you are developing entirely on a single machine, then you'll need to generate a registration key pair _before_ deploying beehive. First, go to the directory you cloned `beehive-server` and run:
 
 ```sh
+# remove all stale keys
+rm ssh/id_rsa_waggle_aot_registration*
 ssh-keygen -f ssh/id_rsa_waggle_aot_registration -N ''
 ```
 
