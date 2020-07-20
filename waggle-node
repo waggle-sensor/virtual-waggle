@@ -26,8 +26,8 @@ def run_quiet(*args, **kwargs):
 
 
 def command_up(args):
-    subprocess.check_call(
-        ['docker-compose', '-p', args.project_name, 'up', '-d'])
+    r = subprocess.run(['docker-compose', '-p', args.project_name, 'up', '-d'])
+    sys.exit(r.returncode)
 
 
 def remove_file_if_exists(path):
@@ -39,17 +39,19 @@ def remove_file_if_exists(path):
 
 
 def command_down(args):
-    subprocess.check_call(
+    r = subprocess.run(
         ['docker-compose', '-p', args.project_name, 'down', '--remove-orphans'])
     remove_file_if_exists(Path('private/key.pem'))
     remove_file_if_exists(Path('private/cert.pem'))
     remove_file_if_exists(Path('private/cacert.pem'))
     remove_file_if_exists(Path('private/reverse_ssh_port'))
+    sys.exit(r.returncode)
 
 
 def command_logs(args):
-    subprocess.run(
+    r = subprocess.run(
         ['docker-compose', '-p', args.project_name, 'logs', '-f'])
+    sys.exit(r.returncode)
 
 
 def generate_random_password():
