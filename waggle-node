@@ -177,7 +177,7 @@ def command_build(args):
         user_args += ['--build-arg', a]
 
     # TODO just use random waggle-node_random_hex. this solves the multiple instances issue.
-    subprocess.run([
+    r = subprocess.run([
         'docker',
         'build',
         *user_args,
@@ -187,8 +187,8 @@ def command_build(args):
         '-t', image_name,
         str(args.plugin_dir),
     ], stdout=sys.stderr, stderr=sys.stderr)
-
     print(image_name)
+    sys.exit(r.returncode)
 
 
 sage_json_template = '''{{
