@@ -182,7 +182,7 @@ def command_build(args):
     if missing_keys:
         fatal('error: sage.json is missing fields', missing_keys)
 
-    user_args = (get_build_args_from_list(args.build_args) +
+    user_args = (get_build_args_from_list(args.build_arg) +
                  get_build_args_from_dict(config.get('build_args', {})))
 
     r = subprocess.run([
