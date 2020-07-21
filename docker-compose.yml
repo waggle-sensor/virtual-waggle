@@ -39,6 +39,15 @@ services:
     networks:
       - waggle
     command: enable
+  
+  playback:
+    image: waggle/playback-server
+    env_file:
+      - waggle-node.env
+    networks:
+      - waggle
+    volumes:
+      - "./playback:/data:ro"
 
 networks:
   waggle:

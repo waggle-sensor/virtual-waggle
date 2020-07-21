@@ -148,6 +148,7 @@ def command_run(args):
             '-e', f'WAGGLE_PLUGIN_USERNAME={plugin_username}',
             '-e', f'WAGGLE_PLUGIN_PASSWORD={plugin_password}',
             args.plugin,
+            *args.plugin_args,
         ])
     finally:
         print(f'Cleaning up {args.plugin}')
@@ -281,6 +282,8 @@ def main():
     parser_run = subparsers.add_parser(
         'run', help='runs a plugin inside virtual waggle environment')
     parser_run.add_argument('plugin', help='plugin to run')
+    parser_run.add_argument('plugin_args', nargs=argparse.REMAINDER,
+                            help='arguments to pass to plugin')
     parser_run.set_defaults(func=command_run)
 
     parser_new_plugin = subparsers.add_parser(
