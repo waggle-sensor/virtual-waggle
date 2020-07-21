@@ -154,18 +154,15 @@ def command_run(args):
         run_quiet(['docker', 'rm', '-f', name])
 
 
-def get_build_args_from_args(args):
+def get_build_args_from_list(ls):
     results = []
-    for a in args.build_arg:
+    for a in ls:
         results += ['--build-arg', a]
     return results
 
 
-def get_build_args_from_config(config):
-    results = []
-    for k, v in config.get('build_args', {}).items():
-        results += ['--build-arg', f'{k}={v}']
-    return results
+def get_build_args_from_dict(d):
+    return get_build_args_from_list(f'{k}={v}' for k, v in d.items())
 
 
 def command_build(args):
@@ -185,8 +182,8 @@ def command_build(args):
     if missing_keys:
         fatal('error: sage.json is missing fields', missing_keys)
 
-    user_args = (get_build_args_from_args(args) +
-                 get_build_args_from_config(config))
+    user_args = (get_build_args_from_list(args.build_args) +
+                 get_build_args_from_dict(config.get('build_args', {})))
 
     r = subprocess.run([
         'docker',
