@@ -173,6 +173,40 @@ Going back to the section, this can be built and run using:
 ./waggle-node run $(./waggle-node build plugin-name)
 ```
 
+### Playback Service (Optional)
+
+Virtual waggle runs an instance of the [playback server](https://github.com/waggle-sensor/playback-server). The server is configured to use `playback/` as the root image and video directory and is available inside VW using thee hostname `playback`.
+
+Specifically, you can add media to:
+
+```txt
+playback/
+  bottom/
+    live.mp4        <- bottom camera video
+    images/         <- bottom camera images
+      image1.jpg
+      image2.jpg
+      ...
+  top/
+    live.mp4        <- top camera video
+    images/         <- top camera images
+      image1.jpg
+      image2.jpg
+      ...
+```
+
+These are available over the endpoints:
+
+```txt
+# serves mp4 video stream
+http://playback:8090/bottom/live.mp4
+http://playback:8090/top/live.mp4
+
+# serves sequence of images from data directory
+http://playback:8090/bottom/image.jpg
+http://playback:8090/top/image.jpg
+```
+
 ### Debugging (Optional)
 
 The `report` command can be used to quickly get some internal status of VW. For now, this provides:
