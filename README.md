@@ -218,5 +218,6 @@ http://playback:8090/noise.jpg
 
 The `report` command can be used to quickly get some internal status of VW. For now, this provides:
 
+* Logs from Playback Server
 * Status of RabbitMQ Queues
 * Status of RabbitMQ Shovels
