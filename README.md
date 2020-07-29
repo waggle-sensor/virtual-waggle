@@ -7,13 +7,13 @@ of platforms.
 ## Architecture Overview
 
 ```txt
-┌──────────────┐┌──────────┐┌──────────┐┌───────────┐    ┆    ┌────────────────┐
-│ Registration ││ Plugin 1 ││ Plugin 2 ││ Messaging │ <──┆──> │ Beehive Server │
-└──────────────┘└──────────┘└──────────┘└───────────┘    ┆    └────────────────┘
-            ↑ Waggle Node Application Stack ↑            ┆
-┌───────────────────────────────────────────────────┐    ┆
-│                     Docker                        │    ┆
-└───────────────────────────────────────────────────┘    ┆
+┌──────────────┐┌──────────┐┌──────────┐   ┌──────────┐┌───────────┐    ┆    ┌────────────────┐
+│ Registration ││ Plugin 1 ││ Plugin 2 │...│ Playback |│ Messaging │ <──┆──> │ Beehive Server │
+└──────────────┘└──────────┘└──────────┘   └──────────┘└───────────┘    ┆    └────────────────┘
+                  ↑ Waggle Node Application Stack ↑                     ┆
+┌──────────────────────────────────────────────────────────────────┐    ┆
+│                               Docker                             │    ┆
+└──────────────────────────────────────────────────────────────────┘    ┆
 ```
 
 ## Requirements
@@ -170,6 +170,18 @@ Going back to the section, this can be built and run using:
 ```
 
 ### Playback Service (Optional)
+
+```txt
+               Get user provided
+               images and videos
+┌──────────┐   over HTTP request   ┌────────┐
+│ Playback │ <-------------------> │ Plugin │
+└──────────┘                       └────────┘
+     ↑
+The playback service mocks out the
+network cameras that would usually
+be attached to a physical node.
+```
 
 Virtual waggle runs an instance of the [playback server](https://github.com/waggle-sensor/playback-server). The server is configured to use `playback/` as the root image and video directory and is available inside VW using thee hostname `playback`.
 
