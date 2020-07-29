@@ -241,7 +241,7 @@ def command_new_plugin(args):
 
 
 def command_report(args):
-    print('=== Playback Server Losg ===')
+    print('=== Playback Server Logs ===')
     subprocess.run(['docker-compose', '-p', args.project_name,
                     'logs', 'playback'])
     print()
