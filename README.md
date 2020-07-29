@@ -207,6 +207,17 @@ http://playback:8090/bottom/image.jpg
 http://playback:8090/top/image.jpg
 ```
 
+The playback server also provides two additional endpoints to aid debugging. These are
+always available and don't require you to add images or videos in order to use them.
+
+```txt
+# solid black image
+http://playback:8090/blank.jpg
+
+# random noise image
+http://playback:8090/noise.jpg
+```
+
 ### Debugging (Optional)
 
 The `report` command can be used to quickly get some internal status of VW. For now, this provides:
