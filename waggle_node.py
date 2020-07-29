@@ -72,7 +72,8 @@ def get_docker_image_labels(image):
 
 def setup_rabbitmq_user(args, username, password):
     run_quiet([
-        'docker-compose', 'exec', 'rabbitmq',
+        'docker-compose', '-p', args.project_name,
+        'exec', 'rabbitmq',
         'rabbitmqctl',
         'add_user',
         username,
@@ -80,7 +81,8 @@ def setup_rabbitmq_user(args, username, password):
     ])
 
     run_quiet([
-        'docker-compose', 'exec', 'rabbitmq',
+        'docker-compose', '-p', args.project_name,
+        'exec', 'rabbitmq',
         'rabbitmqctl',
         'change_password',
         username,
@@ -88,7 +90,8 @@ def setup_rabbitmq_user(args, username, password):
     ])
 
     run_quiet([
-        'docker-compose', 'exec', 'rabbitmq',
+        'docker-compose', '-p', args.project_name,
+        'exec', 'rabbitmq',
         'rabbitmqctl',
         'set_permissions',
         username,
@@ -238,13 +241,20 @@ def command_new_plugin(args):
 
 
 def command_report(args):
-    print('=== RabbitMQ Queue Status ===')
-    subprocess.run(['docker-compose', 'exec', 'rabbitmq',
-                    'rabbitmqctl', 'list_queues'])
+    print('=== Playback Server Losg ===')
+    subprocess.run(['docker-compose', '-p', args.project_name,
+                    'logs', 'playback'])
     print()
+
+    print('=== RabbitMQ Queue Status ===')
+    subprocess.run(['docker-compose', '-p', args.project_name,
+                    'exec', 'rabbitmq', 'rabbitmqctl', 'list_queues'])
+    print()
+
     print('=== RabbitMQ Shovel Status ===')
-    subprocess.run(['docker-compose', 'exec', 'rabbitmq',
-                    'rabbitmqctl', 'eval', 'rabbit_shovel_status:status().'])
+    subprocess.run(['docker-compose', '-p', args.project_name,
+                    'exec', 'rabbitmq', 'rabbitmqctl', 'eval', 'rabbit_shovel_status:status().'])
+    print()
 
 
 def main():
