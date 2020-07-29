@@ -172,8 +172,9 @@ Going back to the section, this can be built and run using:
 ### Playback Service (Optional)
 
 ```txt
-               Get user provided
-               images and videos
+   User
+   Data        Get user provided
+     ↓         images and videos
 ┌──────────┐   over HTTP request   ┌────────┐
 │ Playback │ <-------------------> │ Plugin │
 └──────────┘                       └────────┘
