@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ..
+cd $(dirname $0)/..
 
 ./waggle-node down
 rm private/*.pem reverse_ssh_port
