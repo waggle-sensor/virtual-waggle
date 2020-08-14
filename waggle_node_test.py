@@ -5,6 +5,26 @@ import waggle_node
 
 class TestUtils(unittest.TestCase):
 
+    def test_valid_config(self):
+        waggle_node.raise_for_invalid_config({
+            'id': 123,
+            'version': '1.2.3',
+            'name': 'test',
+        })
+
+        with self.assertRaises(KeyError):
+            waggle_node.raise_for_invalid_config({
+                'version': '1.2.3',
+                'name': 'test',
+            })
+
+        with self.assertRaises(ValueError):
+            waggle_node.raise_for_invalid_config({
+                'id': '123',
+                'version': 1,
+                'name': 'test',
+            })
+
     def test_build_config(self):
         args = argparse.Namespace(plugin_dir='/path/to/plugin', build_arg=[])
 

@@ -158,6 +158,21 @@ def command_run(args):
         run_quiet(['docker', 'rm', '-f', name])
 
 
+expected_config_params = [
+    ('id', int),
+    ('version', str),
+    ('name', str),
+]
+
+
+def raise_for_invalid_config(config):
+    for key, type in expected_config_params:
+        if key not in config:
+            raise KeyError(f'sage.json is missing key "{key}"')
+        if not isinstance(config[key], type):
+            raise ValueError(f'sage.json key "{key}" must be of type "{type}"')
+
+
 def get_build_args_from_list(ls):
     results = []
     for a in ls:
@@ -174,6 +189,8 @@ def get_image_name_for_config(config):
 
 
 def get_build_command_for_config(args, config):
+    raise_for_invalid_config(config)
+
     image_name = get_image_name_for_config(config)
 
     # check for expected fields
