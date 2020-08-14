@@ -169,16 +169,12 @@ def get_build_args_from_dict(d):
     return get_build_args_from_list(f'{k}={v}' for k, v in d.items())
 
 
-def command_build(args):
-    if not args.plugin_dir.is_dir():
-        fatal('error: argument must point to base directory of a plugin')
+def get_image_name_for_config(config):
+    return 'plugin-{name}:{version}'.format(**config)
 
-    try:
-        config = json.loads((args.plugin_dir / 'sage.json').read_text())
-    except FileNotFoundError:
-        fatal('error: plugin is missing sage.json metadata file')
 
-    image_name = 'plugin-{name}:{version}'.format(**config)
+def get_build_command_for_config(args, config):
+    image_name = get_image_name_for_config(config)
 
     # check for expected fields
     missing_keys = {'id', 'version', 'name'} - set(config.keys())
@@ -189,7 +185,7 @@ def command_build(args):
     user_args = (get_build_args_from_list(args.build_arg) +
                  get_build_args_from_dict(config.get('build_args', {})))
 
-    r = subprocess.run([
+    return [
         'docker',
         'build',
         *user_args,
@@ -198,8 +194,21 @@ def command_build(args):
         '--label', 'waggle.plugin.name={name}'.format(**config),
         '-t', image_name,
         str(args.plugin_dir),
-    ], stdout=sys.stderr, stderr=sys.stderr)
-    print(image_name)
+    ]
+
+
+def command_build(args):
+    if not args.plugin_dir.is_dir():
+        fatal('error: argument must point to base directory of a plugin')
+
+    try:
+        config = json.loads((args.plugin_dir / 'sage.json').read_text())
+    except FileNotFoundError:
+        fatal('error: plugin is missing sage.json metadata file')
+
+    r = subprocess.run(get_build_command_for_config(args, config),
+                       stdout=sys.stderr, stderr=sys.stderr)
+    print(get_image_name_for_config(config))
     sys.exit(r.returncode)
 
 
