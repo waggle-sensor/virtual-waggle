@@ -38,6 +38,10 @@ def remove_file_if_exists(path):
         pass
 
 
+def get_docker_info():
+    return json.loads(subprocess.check_output(['docker', 'info', '-f', '{{json .}}']))
+
+
 def command_down(args):
     r = subprocess.run(
         ['docker-compose', '-p', args.project_name, 'down', '--remove-orphans'])
@@ -56,13 +60,6 @@ def command_logs(args):
 
 def generate_random_password():
     return secrets.token_hex(20)
-
-
-# TODO Save in case we move back to API instead of rabbitmqctl
-# def rabbitmq_password_hash(password):
-#     salt = bytes([0x90, 0x8d, 0xc6, 0x0a])
-#     data = password.encode()
-#     return b64encode(salt + sha256(salt + data).digest()).decode()
 
 
 def get_docker_image_labels(image):

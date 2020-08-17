@@ -32,11 +32,24 @@ class TestUtils(unittest.TestCase):
             'id': 123,
             'name': 'test',
             'version': '1.2.3',
-            'build_args': {
-                'K1': 'V1',
-                'K2': 'V2',
-                'K3': 'V3',
-            }
+            'sources':
+            [
+                {
+                    'name': 'default',  # optional, default: 'default'
+                    # required
+                    'architectures': ['linux/amd64', 'linux/arm/v7', 'linux/arm/v8'],
+                    'url': 'https://github.com/waggle-sensor/edge-plugins.git',  # required
+                    'branch': 'master',  # optional, default: master
+                    'directory': 'plugin-simple',  # optional, default: root of git repository
+                    # optional, default: Dockerfile , relative to context directory
+                    'dockerfile': 'Dockerfile_sage',
+                    'build_args': {
+                        'K1': 'V1',
+                        'K2': 'V2',
+                        'K3': 'V3',
+                    }
+                },
+            ]
         })
 
         self.assertEqual(cmd, [
