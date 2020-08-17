@@ -251,7 +251,8 @@ def command_build(args):
 
     # exec docker build and print resulting image name.
     r = subprocess.run(cmd, stdout=sys.stderr, stderr=sys.stderr)
-    print(get_image_name_for_config(config))
+    if r.returncode == 0:
+        print(get_image_name_for_config(config))
     sys.exit(r.returncode)
 
 
