@@ -42,8 +42,24 @@ def get_docker_info():
     return json.loads(subprocess.check_output(['docker', 'info', '-f', '{{json .}}']))
 
 
+platform_table = {
+    ('linux', 'x86_64'): 'linux/amd64',
+    ('linux', 'amd64'): 'linux/amd64',
+}
+
+
 def get_platform():
-    info = get
+    info = get_docker_info()
+
+    try:
+        key = (info['OSType'], info['Architecture'])
+    except KeyError:
+        fatal('error: could not find OSType or Architecture in docker info')
+
+    try:
+        return platform_table[key]
+    except KeyError:
+        fatal(f'error: no platform found for {key}')
 
 
 def command_down(args):
@@ -201,8 +217,19 @@ def load_sage_config_for_plugin(plugin_dir):
 def get_build_command_for_config(args, config):
     raise_for_invalid_config(config)
     image_name = get_image_name_for_config(config)
+
+    # get source for platform
+    platform = get_platform()
+
+    try:
+        source = next(s for s in config['sources']
+                      if platform in s['architectures'])
+    except StopIteration:
+        fatal(f'error: no source found for platform "{platform}"')
+
     user_args = (get_build_args_from_list(args.build_arg) +
-                 get_build_args_from_dict(config.get('build_args', {})))
+                 get_build_args_from_dict(source.get('build_args', {})))
+
     return [
         'docker',
         'build',
