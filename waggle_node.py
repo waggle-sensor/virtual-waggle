@@ -42,6 +42,10 @@ def get_docker_info():
     return json.loads(subprocess.check_output(['docker', 'info', '-f', '{{json .}}']))
 
 
+def get_platform():
+    info = get
+
+
 def command_down(args):
     r = subprocess.run(
         ['docker-compose', '-p', args.project_name, 'down', '--remove-orphans'])
@@ -185,12 +189,20 @@ def get_image_name_for_config(config):
     return 'plugin-{name}:{version}'.format(**config)
 
 
+def load_sage_config_for_plugin(plugin_dir):
+    if not plugin_dir.is_dir():
+        fatal('error: argument must point to base directory of a plugin')
+    try:
+        return json.loads((plugin_dir / 'sage.json').read_text())
+    except FileNotFoundError:
+        fatal('error: plugin is missing sage.json metadata file')
+
+
 def get_build_command_for_config(args, config):
     raise_for_invalid_config(config)
     image_name = get_image_name_for_config(config)
     user_args = (get_build_args_from_list(args.build_arg) +
                  get_build_args_from_dict(config.get('build_args', {})))
-
     return [
         'docker',
         'build',
@@ -204,16 +216,8 @@ def get_build_command_for_config(args, config):
 
 
 def command_build(args):
-    if not args.plugin_dir.is_dir():
-        fatal('error: argument must point to base directory of a plugin')
-
-    try:
-        config = json.loads((args.plugin_dir / 'sage.json').read_text())
-    except FileNotFoundError:
-        fatal('error: plugin is missing sage.json metadata file')
-
+    config = load_sage_config_for_plugin(args.plugin_dir)
     cmd = get_build_command_for_config(args, config)
-
     # print explicit build command used. helpful for debugging.
     cmdstr = ' '.join(cmd)
     print(f'Running build command\n{cmdstr}', file=sys.stderr)
