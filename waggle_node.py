@@ -190,15 +190,7 @@ def get_image_name_for_config(config):
 
 def get_build_command_for_config(args, config):
     raise_for_invalid_config(config)
-
     image_name = get_image_name_for_config(config)
-
-    # check for expected fields
-    missing_keys = {'id', 'version', 'name'} - set(config.keys())
-
-    if missing_keys:
-        fatal('error: sage.json is missing fields', missing_keys)
-
     user_args = (get_build_args_from_list(args.build_arg) +
                  get_build_args_from_dict(config.get('build_args', {})))
 
@@ -223,8 +215,14 @@ def command_build(args):
     except FileNotFoundError:
         fatal('error: plugin is missing sage.json metadata file')
 
-    r = subprocess.run(get_build_command_for_config(args, config),
-                       stdout=sys.stderr, stderr=sys.stderr)
+    cmd = get_build_command_for_config(args, config)
+
+    # print explicit build command used. helpful for debugging.
+    cmdstr = ' '.join(cmd)
+    print(f'Running build command\n{cmdstr}', file=sys.stderr)
+
+    # exec docker build and print resulting image name.
+    r = subprocess.run(cmd, stdout=sys.stderr, stderr=sys.stderr)
     print(get_image_name_for_config(config))
     sys.exit(r.returncode)
 
