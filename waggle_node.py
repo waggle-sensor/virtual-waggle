@@ -302,6 +302,13 @@ def command_new_plugin(args):
 
 
 def command_report(args):
+    print('=== Config Info ===')
+    print('Registration Key Exists:', 'Yes' if Path(
+        'private/register.pem').exists() else 'No')
+    print('Node ID:', os.environ.get('WAGGLE_NODE_ID'))
+    print('Beehive Host:', os.environ.get('WAGGLE_BEEHIVE_HOST'))
+    print()
+
     print('=== Playback Server Logs ===')
     subprocess.run(['docker-compose', '-p', args.project_name,
                     'logs', 'playback'])

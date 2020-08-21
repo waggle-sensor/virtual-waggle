@@ -1,3 +1,8 @@
 #!/bin/bash
 
+# load environment variables
+set -a
+source waggle-node.env
+set +a
+
 python3 waggle_node.py $*
