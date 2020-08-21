@@ -16,8 +16,12 @@ TEMPLATE_DIR = Path(sys.argv[0]).parent / 'templates'
 TEMPLATE_NAMES = [p.name for p in TEMPLATE_DIR.glob('*/')]
 
 
-def fatal(*args, **kwargs):
-    print(*args, **kwargs, file=sys.stderr)
+def warning(msg):
+    print(f'\033[93mWARNING: {msg}\033[00m', file=sys.stderr)
+
+
+def fatal(msg):
+    print(f'\033[91mERROR: {msg}\033[00m', file=sys.stderr)
     sys.exit(1)
 
 
@@ -26,6 +30,8 @@ def run_quiet(*args, **kwargs):
 
 
 def command_up(args):
+    if not Path('private/register.pem').exists():
+        warning('No registration key found. Running in local only mode.')
     r = subprocess.run(['docker-compose', '-p', args.project_name, 'up', '-d'])
     sys.exit(r.returncode)
 
@@ -54,12 +60,12 @@ def get_platform():
     try:
         key = (info['OSType'], info['Architecture'])
     except KeyError:
-        fatal('error: could not find OSType or Architecture in docker info')
+        fatal('Could not find OSType or Architecture in docker info.')
 
     try:
         return platform_table[key]
     except KeyError:
-        fatal(f'error: no platform found for {key}')
+        fatal(f'No platform found for "{key}".')
 
 
 def command_down(args):
@@ -133,7 +139,7 @@ def command_run(args):
         try:
             subprocess.check_call(['docker', 'pull', args.plugin])
         except subprocess.CalledProcessError:
-            fatal(f'Failed to pull plugin {args.plugin}')
+            fatal(f'Failed to pull plugin {args.plugin}.')
 
     labels = get_docker_image_labels(args.plugin)
 
@@ -206,12 +212,14 @@ def get_image_name_for_config(config):
 
 
 def load_sage_config_for_plugin(plugin_dir):
+    if not plugin_dir.exists():
+        fatal(f'Plugin path "{plugin_dir}" does not exist.')
     if not plugin_dir.is_dir():
-        fatal('error: argument must point to base directory of a plugin')
+        fatal('Argument must point to base directory of a plugin.')
     try:
         return json.loads((plugin_dir / 'sage.json').read_text())
     except FileNotFoundError:
-        fatal('error: plugin is missing sage.json metadata file')
+        fatal('Plugin is missing sage.json metadata file.')
 
 
 def get_build_command_for_config(args, config):
@@ -281,14 +289,14 @@ def plugin_name_valid(s):
 
 def command_new_plugin(args):
     if not plugin_name_valid(args.name):
-        fatal(f'plugin names can only contain lowercase letters, numbers, _ and -.')
+        fatal(f'Plugin names can only contain lowercase letters, numbers, _ and -.')
 
     plugin_dir = Path(f'plugin-{args.name}')
 
     try:
         copytree(TEMPLATE_DIR / args.template, plugin_dir)
     except FileExistsError:
-        fatal(f'warning: plugin directory {plugin_dir} already exists')
+        fatal(f'Plugin directory {plugin_dir} already exists.')
 
     (plugin_dir / 'sage.json').write_text(sage_json_template.format(name=args.name))
 
