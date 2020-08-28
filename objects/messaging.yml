@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+spec:
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+      - image: waggle/rabbitmq:nc
+        name: rabbitmq
+        ports:
+        - containerPort: 15672
+        - containerPort: 5672
+        env:
+        - name: WAGGLE_NODE_ID
+          value: '00004cd98fb00025'
+        - name: WAGGLE_SUB_ID
+          value: '0000000000000000'
+        - name: WAGGLE_BEEHIVE_HOST
+          value: '10.0.0.5'
+        volumeMounts:
+        - name: rmq-cert
+          mountPath: /etc/certs
+          readOnly: true
+        command: ['/bin/sh', '-c']
+        args: ['rm -rf /etc/waggle; cp -r /etc/certs /etc/waggle; chown -R rabbitmq:rabbitmq /etc/waggle/; chown -R rabbitmq:rabbitmq /etc/rabbitmq/; /docker-entrypoint.sh rabbitmq-server']
+      - image: waggle/stage-messages
+        name: stage-message
+        env:
+        - name: WAGGLE_NODE_ID
+          value: '00004cd98fb00025'
+        - name: WAGGLE_SUB_ID
+          value: '0000000000000000'
+        - name: WAGGLE_BEEHIVE_HOST
+          value: '10.0.0.5'
+        args: ['amqp://worker:worker@rabbitmq', 'messages', '0000000000000000', 'amqp://worker:worker@rabbitmq', 'to-beehive']
+        volumeMounts:
+        - name: rmq-cert
+          mountPath: /etc/waggle
+          readOnly: true
+      volumes:
+      - name: rmq-cert
+        secret:
+          secretName: rmq-cert
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+spec:
+  selector:
+    app: rabbitmq
+  ports:
+    - name: management
+      protocol: TCP
+      port: 15672
+      targetPort: 15672
+    - name: messaging
+      protocol: TCP
+      port: 5672
+      targetPort: 5672
+---
+# TODO - maybe this is better to leave as an exec in the container via rabbitmqctl?
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: shovels
+spec:
+  template:
+    spec:
+      containers:
+      - image: waggle/shovelctl
+        name: shovelctl
+        args: ['enable']
+        env:
+        - name: WAGGLE_NODE_ID
+          value: '00004cd98fb00025'
+        - name: WAGGLE_SUB_ID
+          value: '0000000000000000'
+        - name: WAGGLE_BEEHIVE_HOST
+          value: '10.0.0.5'
+      restartPolicy: OnFailure

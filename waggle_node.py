@@ -11,17 +11,19 @@ import json
 import re
 from shutil import copytree
 import unittest
+import platform
+import urllib.request
 
 TEMPLATE_DIR = Path(sys.argv[0]).parent / 'templates'
 TEMPLATE_NAMES = [p.name for p in TEMPLATE_DIR.glob('*/')]
 
 
 def warning(msg):
-    print(f'\033[93mWARNING: {msg}\033[00m', file=sys.stderr)
+    print(f'\033[93mWARNING {msg}\033[00m', file=sys.stderr)
 
 
 def fatal(msg):
-    print(f'\033[91mERROR: {msg}\033[00m', file=sys.stderr)
+    print(f'\033[91mERROR {msg}\033[00m', file=sys.stderr)
     sys.exit(1)
 
 
@@ -32,8 +34,13 @@ def run_quiet(*args, **kwargs):
 def command_up(args):
     if not Path('private/register.pem').exists():
         warning('No registration key found. Running in local only mode.')
-    r = subprocess.run(['docker-compose', '-p', args.project_name, 'up', '-d'])
-    sys.exit(r.returncode)
+    # create cluster
+    subprocess.run(['./k3d', 'cluster', 'create', args.project_name])
+    # deploy infrastructure
+    subprocess.check_call([
+        'kubectl',
+        '--context', f'k3d-{args.project_name}',
+        'apply', '-f', './objects'])
 
 
 def remove_file_if_exists(path):
@@ -69,13 +76,11 @@ def get_platform():
 
 
 def command_down(args):
-    r = subprocess.run(
-        ['docker-compose', '-p', args.project_name, 'down', '--remove-orphans'])
+    subprocess.check_call(['./k3d', 'cluster', 'delete', args.project_name])
     remove_file_if_exists(Path('private/key.pem'))
     remove_file_if_exists(Path('private/cert.pem'))
     remove_file_if_exists(Path('private/cacert.pem'))
     remove_file_if_exists(Path('private/reverse_ssh_port'))
-    sys.exit(r.returncode)
 
 
 def command_logs(args):
@@ -309,7 +314,11 @@ def command_report(args):
     print('Beehive Host:', os.environ.get('WAGGLE_BEEHIVE_HOST'))
     print()
 
-    print('=== Playback Server Logs ===')
+    print('=== Cluster Status ===')
+    subprocess.check_call([
+        'kubectl',
+        '--context', f'k3d-{args.project_name}',
+        'get', 'all'])
     subprocess.run(['docker-compose', '-p', args.project_name,
                     'logs', 'playback'])
     print()
@@ -323,6 +332,29 @@ def command_report(args):
     subprocess.run(['docker-compose', '-p', args.project_name,
                     'exec', 'rabbitmq', 'rabbitmqctl', 'eval', 'rabbit_shovel_status:status().'])
     print()
+
+
+def ensure_kubernetes_tools_exists():
+    system = {
+        'Darwin': 'darwin',
+        'Linux': 'linux'
+    }[platform.system()]
+
+    machine = {
+        'x86_64': 'amd64'
+    }[platform.machine()]
+
+    if not Path('./k3d').exists():
+        print('Downloading k3d locally.')
+        url = f'https://github.com/rancher/k3d/releases/download/v3.0.1/k3d-{system}-{machine}'
+        urllib.request.urlretrieve(url, './k3d')
+        Path('./k3d').chmod(0o755)
+
+    if not Path('./kubectl').exists():
+        print('Downloading kubectl locally.')
+        url = f'https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/{system}/{machine}/kubectl'
+        urllib.request.urlretrieve(url, './kubectl')
+        Path('./kubectl').chmod(0o755)
 
 
 def main():
@@ -372,7 +404,13 @@ def main():
     parser_new_plugin.set_defaults(func=command_new_plugin)
 
     args = parser.parse_args()
-    args.func(args)
+
+    ensure_kubernetes_tools_exists()
+
+    try:
+        args.func(args)
+    except subprocess.CalledProcessError as exc:
+        sys.exit(exc.returncode)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playback
+spec:
+  selector:
+    matchLabels:
+      app: playback
+  template:
+    metadata:
+      labels:
+        app: playback
+    spec:
+      containers:
+      - image: waggle/playback-server
+        name: playback
+        ports:
+        - containerPort: 8090
+        env:
+        - name: WAGGLE_NODE_ID
+          value: '00004cd98fb00025'
+        - name: WAGGLE_SUB_ID
+          value: '0000000000000000'
+        - name: WAGGLE_BEEHIVE_HOST
+          value: '10.0.0.5'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: playback
+spec:
+  selector:
+    app: playback
+  ports:
+    - name: stream
+      protocol: TCP
+      port: 8090
+      targetPort: 8090
