@@ -333,8 +333,15 @@ def command_report(args):
                     'exec', 'rabbitmq', 'rabbitmqctl', 'eval', 'rabbit_shovel_status:status().'])
     print()
 
+    print('=== Playback Service Status ===')
+    subprocess.run(['./kubectl', '--context',
+                    f'k3d-{args.project_name}', 'logs', 'service/playback'])
+    print()
+
 
 def ensure_kubernetes_tools_exists():
+    # k3d and kubectl use a slightly different naming convention for their releases than
+    # Python's platform convention, so we map them here.
     system = {
         'Darwin': 'darwin',
         'Linux': 'linux'
