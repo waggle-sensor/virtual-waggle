@@ -334,33 +334,29 @@ def command_new_plugin(args):
 
 
 def command_report(args):
+    def kubectl(cmd):
+        return subprocess.run(['./kubectl', '--context', f'k3d-{args.project_name}'] + cmd)
+
     print('=== Config Info ===')
-    print('Registration Key Exists:', 'Yes' if Path(
-        'private/register.pem').exists() else 'No')
+    print('Registration Key Exists:', 'Yes' if Path('private/register.pem').exists() else 'No')
     print('Node ID:', os.environ.get('WAGGLE_NODE_ID'))
     print('Beehive Host:', os.environ.get('WAGGLE_BEEHIVE_HOST'))
     print()
 
     print('=== Cluster Status ===')
-    subprocess.check_call([
-        './kubectl',
-        '--context', f'k3d-{args.project_name}',
-        'get', 'all'])
+    kubectl(['get', 'all'])
     print()
 
     print('=== RabbitMQ Queue Status ===')
-    subprocess.run(['docker-compose', '-p', args.project_name,
-                    'exec', 'rabbitmq', 'rabbitmqctl', 'list_queues'])
+    kubectl(['exec', 'svc/rabbitmq', '--', 'rabbitmqctl', 'list_queues'])
     print()
 
     print('=== RabbitMQ Shovel Status ===')
-    subprocess.run(['docker-compose', '-p', args.project_name,
-                    'exec', 'rabbitmq', 'rabbitmqctl', 'eval', 'rabbit_shovel_status:status().'])
+    kubectl(['exec', 'svc/rabbitmq', '--', 'rabbitmqctl', 'eval', 'rabbit_shovel_status:status().'])
     print()
 
     print('=== Playback Service Status ===')
-    subprocess.run(['./kubectl', '--context',
-                    f'k3d-{args.project_name}', 'logs', 'service/playback'])
+    kubectl(['logs', 'service/playback'])
     print()
 
 
