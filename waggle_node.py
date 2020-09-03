@@ -31,11 +31,17 @@ def run_quiet(*args, **kwargs):
     return subprocess.run(*args, **kwargs, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
+def k3s_cluster_exists(name):
+    r = subprocess.run(['./k3d', 'cluster', 'list', name], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return r.returncode == 0
+
+
 def command_up(args):
     if not Path('private/register.pem').exists():
         warning('No registration key found. Running in local only mode.')
 
-    subprocess.run(['./k3d', 'cluster', 'create', args.project_name])
+    if not k3s_cluster_exists(args.project_name):
+        subprocess.run(['./k3d', 'cluster', 'create', args.project_name])
     
     # generate configmap for waggle node env
     Path('objects/config.yml').write_bytes(subprocess.check_output([
@@ -95,7 +101,12 @@ def get_platform():
 
 
 def command_down(args):
-    subprocess.check_call(['./k3d', 'cluster', 'delete', args.project_name])
+    if k3s_cluster_exists(args.project_name):
+        subprocess.run(['./k3d', 'cluster', 'delete', args.project_name])
+
+    remove_file_if_exists(Path('objects/config.yml'))
+    remove_file_if_exists(Path('objects/secret.yml'))
+    remove_file_if_exists(Path('private/key.pem'))
     remove_file_if_exists(Path('private/key.pem'))
     remove_file_if_exists(Path('private/cert.pem'))
     remove_file_if_exists(Path('private/cacert.pem'))
