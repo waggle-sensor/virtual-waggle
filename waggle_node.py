@@ -34,13 +34,32 @@ def run_quiet(*args, **kwargs):
 def command_up(args):
     if not Path('private/register.pem').exists():
         warning('No registration key found. Running in local only mode.')
-    # create cluster
+
     subprocess.run(['./k3d', 'cluster', 'create', args.project_name])
-    # deploy infrastructure
-    subprocess.check_call([
-        'kubectl',
-        '--context', f'k3d-{args.project_name}',
-        'apply', '-f', './objects'])
+    
+    # generate configmap for waggle node env
+    Path('objects/config.yml').write_bytes(subprocess.check_output([
+        './kubectl', '--context', f'k3d-{args.project_name}',
+        'create', 'configmap', 'waggle-node-env',
+        '--from-env-file=waggle-node.env',
+        '-o', 'yaml',
+        '--dry-run=client',
+    ]))
+
+    # generate secrets for registration
+    Path('objects/secret.yml').write_bytes(subprocess.check_output([
+        './kubectl', '--context', f'k3d-{args.project_name}',
+        'create', 'secret', 'generic', 'waggle-node-private',
+        '--from-file=./private',
+        '-o', 'yaml',
+        '--dry-run=client',
+    ]))
+    
+    # deploy entire app
+    subprocess.check_output([
+        './kubectl', '--context', f'k3d-{args.project_name}',
+        'apply', '-f', './objects'
+    ])
 
 
 def remove_file_if_exists(path):
@@ -84,9 +103,7 @@ def command_down(args):
 
 
 def command_logs(args):
-    r = subprocess.run(
-        ['docker-compose', '-p', args.project_name, 'logs', '-f'])
-    sys.exit(r.returncode)
+    subprocess.check_call(['docker-compose', '-p', args.project_name, 'logs', '-f'])
 
 
 def generate_random_password():
@@ -316,7 +333,7 @@ def command_report(args):
 
     print('=== Cluster Status ===')
     subprocess.check_call([
-        'kubectl',
+        './kubectl',
         '--context', f'k3d-{args.project_name}',
         'get', 'all'])
     subprocess.run(['docker-compose', '-p', args.project_name,

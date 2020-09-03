@@ -1,3 +1,4 @@
+# TODO use volume for managing private credentials
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -17,37 +18,29 @@ spec:
         ports:
         - containerPort: 15672
         - containerPort: 5672
-        env:
-        - name: WAGGLE_NODE_ID
-          value: '00004cd98fb00025'
-        - name: WAGGLE_SUB_ID
-          value: '0000000000000000'
-        - name: WAGGLE_BEEHIVE_HOST
-          value: '10.0.0.5'
+        envFrom:
+          - configMapRef:
+              name: waggle-node-env
         volumeMounts:
-        - name: rmq-cert
+        - name: waggle-node-private
           mountPath: /etc/certs
           readOnly: true
         command: ['/bin/sh', '-c']
         args: ['rm -rf /etc/waggle; cp -r /etc/certs /etc/waggle; chown -R rabbitmq:rabbitmq /etc/waggle/; chown -R rabbitmq:rabbitmq /etc/rabbitmq/; /docker-entrypoint.sh rabbitmq-server']
       - image: waggle/stage-messages
         name: stage-message
-        env:
-        - name: WAGGLE_NODE_ID
-          value: '00004cd98fb00025'
-        - name: WAGGLE_SUB_ID
-          value: '0000000000000000'
-        - name: WAGGLE_BEEHIVE_HOST
-          value: '10.0.0.5'
+        envFrom:
+          - configMapRef:
+              name: waggle-node-env
         args: ['amqp://worker:worker@rabbitmq', 'messages', '0000000000000000', 'amqp://worker:worker@rabbitmq', 'to-beehive']
         volumeMounts:
-        - name: rmq-cert
+        - name: waggle-node-private
           mountPath: /etc/waggle
           readOnly: true
       volumes:
-      - name: rmq-cert
+      - name: waggle-node-private
         secret:
-          secretName: rmq-cert
+          secretName: waggle-node-private
 ---
 apiVersion: v1
 kind: Service
@@ -78,11 +71,7 @@ spec:
       - image: waggle/shovelctl
         name: shovelctl
         args: ['enable']
-        env:
-        - name: WAGGLE_NODE_ID
-          value: '00004cd98fb00025'
-        - name: WAGGLE_SUB_ID
-          value: '0000000000000000'
-        - name: WAGGLE_BEEHIVE_HOST
-          value: '10.0.0.5'
+        envFrom:
+          - configMapRef:
+              name: waggle-node-env
       restartPolicy: OnFailure
