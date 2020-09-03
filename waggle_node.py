@@ -107,7 +107,6 @@ def command_down(args):
     remove_file_if_exists(Path('objects/config.yml'))
     remove_file_if_exists(Path('objects/secret.yml'))
     remove_file_if_exists(Path('private/key.pem'))
-    remove_file_if_exists(Path('private/key.pem'))
     remove_file_if_exists(Path('private/cert.pem'))
     remove_file_if_exists(Path('private/cacert.pem'))
     remove_file_if_exists(Path('private/reverse_ssh_port'))
@@ -347,8 +346,6 @@ def command_report(args):
         './kubectl',
         '--context', f'k3d-{args.project_name}',
         'get', 'all'])
-    subprocess.run(['docker-compose', '-p', args.project_name,
-                    'logs', 'playback'])
     print()
 
     print('=== RabbitMQ Queue Status ===')
