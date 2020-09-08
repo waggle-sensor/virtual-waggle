@@ -32,8 +32,7 @@ def run_quiet(*args, **kwargs):
 def command_up(args):
     if not Path('private/register.pem').exists():
         warning('No registration key found. Running in local only mode.')
-    r = subprocess.run(['docker-compose', '-p', args.project_name, 'up', '-d'])
-    sys.exit(r.returncode)
+    subprocess.check_call(['docker-compose', '-p', args.project_name, 'up', '-d'])
 
 
 def remove_file_if_exists(path):
@@ -69,19 +68,15 @@ def get_platform():
 
 
 def command_down(args):
-    r = subprocess.run(
-        ['docker-compose', '-p', args.project_name, 'down', '--remove-orphans'])
+    subprocess.check_call(['docker-compose', '-p', args.project_name, 'down', '--remove-orphans'])
     remove_file_if_exists(Path('private/key.pem'))
     remove_file_if_exists(Path('private/cert.pem'))
     remove_file_if_exists(Path('private/cacert.pem'))
     remove_file_if_exists(Path('private/reverse_ssh_port'))
-    sys.exit(r.returncode)
 
 
 def command_logs(args):
-    r = subprocess.run(
-        ['docker-compose', '-p', args.project_name, 'logs', '-f'])
-    sys.exit(r.returncode)
+    subprocess.check_call(['docker-compose', '-p', args.project_name, 'logs', '-f'])
 
 
 def generate_random_password():
@@ -258,27 +253,21 @@ def command_build(args):
     print(f'Running build command\n{cmdstr}', file=sys.stderr)
 
     # exec docker build and print resulting image name.
-    r = subprocess.run(cmd, stdout=sys.stderr, stderr=sys.stderr)
-    if r.returncode == 0:
-        print(get_image_name_for_config(config))
-    sys.exit(r.returncode)
+    subprocess.check_call(cmd, stdout=sys.stderr, stderr=sys.stderr)
+    print(get_image_name_for_config(config))
 
 
 sage_json_template = '''{{
-    "architecture": [
-        "linux/amd64",
-        "linux/arm/v7",
-        "linux/arm64"
-    ],
-    "arguments": [],
-    "description": "My cool new plugin called {name}",
-    "inputs": [],
-    "metadata": {{}},
     "id": 1000,
     "name": "{name}",
-    "namespace": "waggle",
-    "source": "URL for repo",
-    "version": "0.0.1"
+    "description": "My cool new plugin called {name}.",
+    "version": "0.0.1",
+    "sources": [
+        {{
+            "architectures": ["linux/amd64", "linux/arm/v7", "linux/arm64"],
+            "build_args": {{}}
+        }}
+    ]
 }}
 '''
 
@@ -372,7 +361,11 @@ def main():
     parser_new_plugin.set_defaults(func=command_new_plugin)
 
     args = parser.parse_args()
-    args.func(args)
+
+    try:
+        args.func(args)
+    except subprocess.CalledProcessError as exc:
+        sys.exit(exc.returncode)
 
 
 if __name__ == '__main__':
