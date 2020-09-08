@@ -154,6 +154,8 @@ def command_run(args):
 
     run_quiet(['docker', 'rm', '-f', name])
 
+    data_config_path = Path('./data-config.json').absolute()
+
     try:
         print(f'Running {args.plugin}\n')
 
@@ -168,6 +170,7 @@ def command_run(args):
             '-e', f'WAGGLE_PLUGIN_INSTANCE={plugin_instance}',
             '-e', f'WAGGLE_PLUGIN_USERNAME={plugin_username}',
             '-e', f'WAGGLE_PLUGIN_PASSWORD={plugin_password}',
+            '-v', f'{data_config_path}:/run/waggle/data-config.json',
             args.plugin,
             *args.plugin_args,
         ])
