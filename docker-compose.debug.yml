@@ -1,0 +1,10 @@
+version: '3'
+services:
+
+  rabbitmq:
+    ports:
+      - 127.0.0.1:15672:15672
+  
+  playback:
+    ports:
+      - 127.0.0.1:8090:8090

@@ -32,7 +32,11 @@ def run_quiet(*args, **kwargs):
 def command_up(args):
     if not Path('private/register.pem').exists():
         warning('No registration key found. Running in local only mode.')
-    subprocess.check_call(['docker-compose', '-p', args.project_name, 'up', '-d'])
+
+    if args.debug:
+        subprocess.check_call(['docker-compose', '-p', args.project_name, '-f', 'docker-compose.yml', '-f', 'docker-compose.debug.yml', 'up', '-d'])
+    else:
+        subprocess.check_call(['docker-compose', '-p', args.project_name, 'up', '-d'])
 
 
 def remove_file_if_exists(path):
@@ -327,6 +331,7 @@ def main():
 
     parser_up = subparsers.add_parser(
         'up', help='start virtual waggle environment')
+    parser_up.add_argument('-D', '--debug', action='store_true', help='open local service ports for debugging')
     parser_up.set_defaults(func=command_up)
 
     parser_down = subparsers.add_parser(
