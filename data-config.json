@@ -45,6 +45,21 @@
         }
     },
     {
+        "name": "Top Camera Video",
+        "match": {
+            "id": "top_video",
+            "type": "camera/video",
+            "orientation": "top",
+            "resolution": "800x600"
+        },
+        "handler": {
+            "type": "video",
+            "args": {
+                "url": "http://playback:8090/top/live.mp4"
+            }
+        }
+    },
+    {
         "name": "Sensor Pub/Sub",
         "match": {
             "type": "env/.*"
