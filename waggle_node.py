@@ -16,6 +16,10 @@ TEMPLATE_DIR = Path(sys.argv[0]).parent / 'templates'
 TEMPLATE_NAMES = [p.name for p in TEMPLATE_DIR.glob('*/')]
 
 
+def notice(msg):
+    print(f'\033[94mNOTICE: {msg}\033[00m', file=sys.stderr)
+
+
 def warning(msg):
     print(f'\033[93mWARNING: {msg}\033[00m', file=sys.stderr)
 
@@ -32,11 +36,22 @@ def run_quiet(*args, **kwargs):
 def command_up(args):
     if not Path('private/register.pem').exists():
         warning('No registration key found. Running in local only mode.')
-
+    
+    extra_args = []
     if args.debug:
-        subprocess.check_call(['docker-compose', '-p', args.project_name, '-f', 'docker-compose.yml', '-f', 'docker-compose.debug.yml', 'up', '-d'])
-    else:
-        subprocess.check_call(['docker-compose', '-p', args.project_name, 'up', '-d'])
+        extra_args += ['-f', 'docker-compose.debug.yml']
+        notice('RabbitMQ management is available at: http://127.0.0.1:15672')
+        notice('Playback server is available at: http://127.0.0.1:8090')
+    if args.ros:
+        extra_args += ['-f', 'docker-compose.ros.yml']
+        notice('ROS master is available at: http://ros-master:11311')
+
+    subprocess.check_call([
+        'docker-compose',
+        '-p', args.project_name,
+        '-f', 'docker-compose.yml', # explicitly put this compose file first, since others can be in extra_args
+        *extra_args,
+        'up', '-d', '--remove-orphans'])
 
 
 def remove_file_if_exists(path):
@@ -331,7 +346,8 @@ def main():
 
     parser_up = subparsers.add_parser(
         'up', help='start virtual waggle environment')
-    parser_up.add_argument('-D', '--debug', action='store_true', help='open local service ports for debugging')
+    parser_up.add_argument('--debug', action='store_true', help='open local service ports for debugging')
+    parser_up.add_argument('--ros', action='store_true', help='run local ros master')
     parser_up.set_defaults(func=command_up)
 
     parser_down = subparsers.add_parser(

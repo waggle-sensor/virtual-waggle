@@ -1,0 +1,9 @@
+version: '3'
+services:
+  
+  ros-master:
+    image: ros:noetic-ros-base-focal
+    command:  stdbuf -o L roscore
+    networks:
+      - waggle
+    restart: always
