@@ -44,7 +44,7 @@ def command_up(args):
         notice('Playback server is available at: http://127.0.0.1:8090')
     if args.ros:
         extra_args += ['-f', 'docker-compose.ros.yml']
-        notice('ROS master is available at: http://ros-master:11311')
+        notice('ROS plugins should use ROS_MASTER_URI=http://ros-master:11311')
 
     subprocess.check_call([
         'docker-compose',
