@@ -1,25 +1,25 @@
 import argparse
 import unittest
-import waggle_node
+import commands.build
 
 
 class TestUtils(unittest.TestCase):
 
     def test_valid_config(self):
-        waggle_node.raise_for_invalid_config({
+        commands.build.raise_for_invalid_config({
             'id': 123,
             'version': '1.2.3',
             'name': 'test',
         })
 
         with self.assertRaises(KeyError):
-            waggle_node.raise_for_invalid_config({
+            commands.build.raise_for_invalid_config({
                 'version': '1.2.3',
                 'name': 'test',
             })
 
         with self.assertRaises(ValueError):
-            waggle_node.raise_for_invalid_config({
+            commands.build.raise_for_invalid_config({
                 'id': '123',
                 'version': 1,
                 'name': 'test',
@@ -28,7 +28,7 @@ class TestUtils(unittest.TestCase):
     def test_build_config(self):
         args = argparse.Namespace(plugin_dir='/path/to/plugin', build_arg=[])
 
-        cmd = waggle_node.get_build_command_for_config(args, {
+        cmd = commands.build.get_build_command_for_config(args, {
             'id': 123,
             'name': 'test',
             'version': '1.2.3',
@@ -64,7 +64,7 @@ class TestUtils(unittest.TestCase):
             '/path/to/plugin'])
 
     def test_image_name_for_config(self):
-        name = waggle_node.get_image_name_for_config({
+        name = commands.build.get_image_name_for_config({
             'id': 123,
             'name': 'test',
             'version': '1.2.3',
