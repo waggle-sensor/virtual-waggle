@@ -13,6 +13,7 @@ def run(args):
     # Expose ports on host for debugging.
     if args.debug:
         extra_args += ['-f', 'docker-compose.debug.yml']
+        log.notice('RabbitMQ is available at: http://127.0.0.1:5672')
         log.notice('RabbitMQ management is available at: http://127.0.0.1:15672')
         log.notice('Playback server is available at: http://127.0.0.1:8090')
     
