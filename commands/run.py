@@ -16,8 +16,9 @@ def generate_random_password():
 
 
 def get_docker_image_labels(image):
-    results = json.loads(subprocess.check_output(['docker', 'inspect', image]))
-    return {k: v for r in results for k, v in r['ContainerConfig']['Labels'].items()}
+    output = subprocess.check_output(['docker', 'inspect',
+        '-f', '{{ json (or .ContainerConfig.Labels .Config.Labels) }}', image])
+    return json.loads(output)
 
 
 def setup_rabbitmq_user(args, username, password):
