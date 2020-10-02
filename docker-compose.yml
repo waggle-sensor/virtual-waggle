@@ -6,7 +6,7 @@ services:
     env_file:
       - waggle-node.env
     volumes:
-      - "${WAGGLE_ETC_ROOT}:/etc/waggle:ro"
+      - waggle-data:/etc/waggle
     networks:
       - waggle
     restart: always
@@ -16,7 +16,8 @@ services:
     env_file:
       - waggle-node.env
     volumes:
-      - "${WAGGLE_ETC_ROOT}:/etc/waggle"
+      - waggle-data:/etc/waggle
+      - "${WAGGLE_ETC_ROOT}/register.pem:/etc/waggle/register.pem:ro"
     networks:
       - waggle
     restart: on-failure
@@ -26,7 +27,7 @@ services:
     env_file:
       - waggle-node.env
     volumes:
-      - "${WAGGLE_ETC_ROOT}:/etc/waggle:ro"
+      - waggle-data:/etc/waggle
     networks:
       - waggle
     restart: always
@@ -48,6 +49,9 @@ services:
       - waggle
     volumes:
       - "./playback:/data:ro"
+
+volumes:
+  waggle-data:
 
 networks:
   waggle:
