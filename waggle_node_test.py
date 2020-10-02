@@ -1,5 +1,6 @@
 import argparse
 import unittest
+import json
 import commands.build
 
 
@@ -24,44 +25,6 @@ class TestUtils(unittest.TestCase):
                 'version': 1,
                 'name': 'test',
             })
-
-    def test_build_config(self):
-        args = argparse.Namespace(plugin_dir='/path/to/plugin', build_arg=[])
-
-        cmd = commands.build.get_build_command_for_config(args, {
-            'id': 123,
-            'name': 'test',
-            'version': '1.2.3',
-            'sources':
-            [
-                {
-                    'name': 'default',  # optional, default: 'default'
-                    # required
-                    'architectures': ['linux/amd64', 'linux/arm/v7', 'linux/arm/v8'],
-                    'url': 'https://github.com/waggle-sensor/edge-plugins.git',  # required
-                    'branch': 'master',  # optional, default: master
-                    'directory': 'plugin-simple',  # optional, default: root of git repository
-                    # optional, default: Dockerfile , relative to context directory
-                    'dockerfile': 'Dockerfile_sage',
-                    'build_args': {
-                        'K1': 'V1',
-                        'K2': 'V2',
-                        'K3': 'V3',
-                    }
-                },
-            ]
-        })
-
-        self.assertEqual(cmd, [
-            'docker', 'build',
-            '--build-arg', 'K1=V1',
-            '--build-arg', 'K2=V2',
-            '--build-arg', 'K3=V3',
-            '--label', 'waggle.plugin.id=123',
-            '--label', 'waggle.plugin.version=1.2.3',
-            '--label', 'waggle.plugin.name=test',
-            '-t', 'plugin-test:1.2.3',
-            '/path/to/plugin'])
 
     def test_image_name_for_config(self):
         name = commands.build.get_image_name_for_config({
