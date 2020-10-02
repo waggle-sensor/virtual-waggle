@@ -17,7 +17,7 @@ services:
       - waggle-node.env
     volumes:
       - waggle-data:/etc/waggle
-      - "${WAGGLE_ETC_ROOT}/register.pem:/etc/waggle/register.pem:ro"
+      - ./private/register.pem:/etc/waggle/register.pem:ro
     networks:
       - waggle
     restart: on-failure
