@@ -89,7 +89,7 @@ def get_build_command_for_config(args, config):
         'docker',
         'build',
         *user_args,
-        '--label', 'waggle.plugin.config={}'.format(json.dumps(config, separators=(':', ','))),
+        '--label', 'waggle.plugin.config={}'.format(json.dumps(config, separators=(',', ':'))),
         '--label', 'waggle.plugin.id={id}'.format(**config),
         '--label', 'waggle.plugin.version={version}'.format(**config),
         '--label', 'waggle.plugin.name={name}'.format(**config),
