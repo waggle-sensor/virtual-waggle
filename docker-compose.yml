@@ -22,8 +22,8 @@ services:
       - waggle
     restart: on-failure
 
-  stage-messages:
-    image: waggle/stage-messages
+  data-sharing-service:
+    image: waggle/data-sharing-service
     env_file:
       - waggle-node.env
     volumes:
@@ -31,8 +31,8 @@ services:
     networks:
       - waggle
     restart: always
-    command: amqp://worker:worker@rabbitmq messages 0000000000000000 amqp://worker:worker@rabbitmq to-beehive
-  
+    command: amqp://worker:worker@rabbitmq
+
   shovelctl:
     image: waggle/shovelctl
     env_file:
