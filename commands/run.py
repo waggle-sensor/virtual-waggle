@@ -71,9 +71,12 @@ def run(args):
 
     labels = get_docker_image_labels(args.plugin)
 
-    plugin_id = int(labels['waggle.plugin.id'])
-    plugin_version = labels['waggle.plugin.version']
-    plugin_name = labels['waggle.plugin.name']
+    config = json.loads(labels['waggle.plugin.config'])
+
+    plugin_name = config['name']
+    plugin_id = int(config['id'])
+    plugin_version = config['version']
+    plugin_name = config['name']
     plugin_instance = 0
     plugin_username = f'plugin-{plugin_id}-{plugin_version}-{plugin_instance}'
     plugin_password = generate_random_password()
@@ -98,6 +101,7 @@ def run(args):
             '--network', network,
             '--env-file', 'waggle-node.env',
             '--restart', 'on-failure',
+            '-e', f'WAGGLE_PLUGIN_NAME={plugin_name}:{plugin_version}',
             '-e', f'WAGGLE_PLUGIN_ID={plugin_id}',
             '-e', f'WAGGLE_PLUGIN_VERSION={plugin_version}',
             '-e', f'WAGGLE_PLUGIN_INSTANCE={plugin_instance}',
