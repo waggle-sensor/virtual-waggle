@@ -5,42 +5,12 @@ import subprocess
 import json
 
 
-platform_table = {
-    ('linux', 'x86_64'): 'linux/amd64',
-    ('linux', 'amd64'): 'linux/amd64',
-}
-
-expected_config_params = [
-    ('id', int),
-    ('version', str),
-    ('name', str),
-]
-
-
-def get_docker_info():
-    return json.loads(subprocess.check_output(['docker', 'info', '-f', '{{json .}}']))
-
-
 def get_platform():
-    info = get_docker_info()
-
-    try:
-        key = (info['OSType'], info['Architecture'])
-    except KeyError:
-        log.fatal('Could not find OSType or Architecture in docker info.')
-
-    try:
-        return platform_table[key]
-    except KeyError:
-        log.fatal(f'No platform found for "{key}".')
-
-
-def raise_for_invalid_config(config):
-    for key, type in expected_config_params:
-        if key not in config:
-            raise KeyError(f'sage.json is missing key "{key}"')
-        if not isinstance(config[key], type):
-            raise ValueError(f'sage.json key "{key}" must be of type "{type}"')
+    return (
+        subprocess.check_output(['docker', 'version', '-f', '{{.Server.Os}}/{{.Server.Arch}}'])
+        .decode()
+        .strip()
+    )
 
 
 def get_build_args_from_list(ls):
@@ -70,7 +40,11 @@ def load_sage_config_for_plugin(plugin_dir):
 
 
 def get_build_command_for_config(args, config):
-    raise_for_invalid_config(config)
+    # check config
+    assert isinstance(config['id'], int)
+    assert isinstance(config['version'], str)
+    assert isinstance(config['name'], str)
+
     image_name = get_image_name_for_config(config)
 
     # get source for platform
