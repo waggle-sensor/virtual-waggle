@@ -3,7 +3,8 @@ import subprocess
 
 
 def run(args):
-    subprocess.check_call(['docker-compose', '-p', args.project_name, 'down', '--remove-orphans'])
+    subprocess.check_call(['docker-compose', '-p', args.project_name,
+        'down', '--remove-orphans', '--volumes'])
 
 
 def register(subparsers):

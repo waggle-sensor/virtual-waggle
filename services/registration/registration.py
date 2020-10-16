@@ -8,9 +8,10 @@ import logging
 
 
 logging.basicConfig(
-    format='%(levelname)s | %(message)s',
     level=logging.INFO,
-)
+    format='%(asctime)s %(message)s',
+    datefmt='%Y/%m/%d %H:%M:%S')
+
 
 WAGGLE_NODE_ID = os.environ['WAGGLE_NODE_ID']
 WAGGLE_BEEHIVE_HOST = os.environ['WAGGLE_BEEHIVE_HOST']
@@ -129,8 +130,11 @@ def register_with_ssh_cert_server():
 
 
 def register_if_needed():
+    logging.info('checking for credentials')
+
     # TODO check if credentials are valid
     if all(path.exists() for path in should_exist):
+        logging.info('already has credentials - will not reregister')
         return
 
     logging.info('starting registration of node %s on beehive %s.',
@@ -151,6 +155,7 @@ def register_if_needed():
 
 
 def main():
+    logging.info('starting registration service')
     while True:
         register_if_needed()
         time.sleep(300)
