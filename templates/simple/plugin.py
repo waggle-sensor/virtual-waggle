@@ -1,10 +1,11 @@
-from waggle.plugin import Plugin
+import waggle.plugin as plugin
+from random import random
 from time import sleep
 
-plugin = Plugin()
+plugin.init()
 
 while True:
-    print('publishing')
-    plugin.add_measurement({'id': 1, 'sub_id': 1, 'value': 12.34})
-    plugin.publish_measurements()
+    value = 25.0 + 5*random()
+    print('publishing', value)
+    plugin.publish('env.temperature', value)
     sleep(1)
