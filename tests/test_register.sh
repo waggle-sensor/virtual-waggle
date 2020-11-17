@@ -2,9 +2,9 @@
 
 cd $(dirname $0)/..
 
-./waggle-node down
+./virtual-waggle down
 rm private/*.pem reverse_ssh_port
-./waggle-node up
+./virtual-waggle up
 
 for attempt in $(seq 3); do
     echo "waiting for credentials. attempt $attempt / 3"
