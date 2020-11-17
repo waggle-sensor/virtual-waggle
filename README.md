@@ -71,18 +71,18 @@ Known Issue: We are working on a solution to unify the Docker Desktop and Docker
 In order to run plugins, you need to ensure all the Virtual Waggle environment is running. To do this, run:
 
 ```sh
-./waggle-node up
+./virtual-waggle up
 ```
 
 When you're done, you can cleanup the Virtual Waggle environment by running:
 
 ```sh
-./waggle-node down
+./virtual-waggle down
 ```
 
 ### Building and Running Plugins
 
-Once you've run `./waggle-node up`, you're ready to start working on plugins using the `build` and `run` commands:
+Once you've run `./virtual-waggle up`, you're ready to start working on plugins using the `build` and `run` commands:
 
 * The `build` command accepts a plugin directory and outputs the name of the plugin that was built.
 
@@ -91,14 +91,14 @@ Once you've run `./waggle-node up`, you're ready to start working on plugins usi
 In a typical development process, you'll combine these to build and run a plugin as follows:
 
 ```sh
-./waggle-node run $(./waggle-node build path/to/plugin)
+./virtual-waggle run $(./virtual-waggle build path/to/plugin)
 ```
 
 As a concrete example, if I want to clone the edge plugins repo and try out the simple plugin:
 
 ```sh
 git clone https://github.com/waggle-sensor/edge-plugins
-./waggle-node run $(./waggle-node build ./edge-plugins/plugin-simple)
+./virtual-waggle run $(./virtual-waggle build ./edge-plugins/plugin-simple)
 ```
 
 ```sh
@@ -145,7 +145,7 @@ adding measurement 0.006611365595469376
 You can also run remote plugins from the ECR with `run`. For example:
 
 ```sh
-./waggle-node run waggle/plugin-simple:0.2.0
+./virtual-waggle run waggle/plugin-simple:0.2.0
 ```
 
 ### Creating a New Plugin
@@ -153,7 +153,7 @@ You can also run remote plugins from the ECR with `run`. For example:
 A new plugin outline can be generated using the `newplugin` command as follows:
 
 ```sh
-./waggle-node newplugin name
+./virtual-waggle newplugin name
 ```
 
 This will create a plugin directory named `plugin-name` which will contain:
@@ -166,7 +166,7 @@ This will create a plugin directory named `plugin-name` which will contain:
 Going back to the section, this can be built and run using:
 
 ```sh
-./waggle-node run $(./waggle-node build plugin-name)
+./virtual-waggle run $(./virtual-waggle build plugin-name)
 ```
 
 ### Playback Service (Optional)

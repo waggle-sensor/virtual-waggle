@@ -3,6 +3,6 @@
 cd $(dirname $0)/..
 
 rm -rf plugin-test
-./waggle-node newplugin test
-./waggle-node build plugin-test
+./virtual-waggle newplugin test
+./virtual-waggle build plugin-test
 rm -rf plugin-test
