@@ -2,7 +2,7 @@ version: '3'
 services:
 
   rabbitmq:
-    image: waggle/rabbitmq:nc
+    image: waggle/rabbitmq:vw
     env_file:
       - waggle-node.env
     volumes:
@@ -12,7 +12,7 @@ services:
     restart: always
 
   registration:
-    image: waggle/registration
+    image: waggle/registration:vw
     env_file:
       - waggle-node.env
     volumes:
@@ -23,7 +23,7 @@ services:
     restart: on-failure
 
   data-sharing-service:
-    image: waggle/data-sharing-service
+    image: waggle/data-sharing-service:vw
     env_file:
       - waggle-node.env
     volumes:
@@ -34,7 +34,7 @@ services:
     command: amqp://worker:worker@rabbitmq
 
   shovelctl:
-    image: waggle/shovelctl
+    image: waggle/shovelctl:vw
     env_file:
       - waggle-node.env
     networks:
@@ -42,7 +42,7 @@ services:
     command: enable
   
   playback:
-    image: waggle/playback-server
+    image: waggle/playback-server:vw
     env_file:
       - waggle-node.env
     networks:
