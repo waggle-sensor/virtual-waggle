@@ -6,15 +6,7 @@ of platforms.
 
 ## Architecture Overview
 
-```txt
-┌──────────────┐┌──────────┐┌──────────┐   ┌──────────┐┌───────────┐    ┆    ┌────────────────┐
-│ Registration ││ Plugin 1 ││ Plugin 2 │...│ Playback |│ Messaging │ <──┆──> │ Beehive Server │
-└──────────────┘└──────────┘└──────────┘   └──────────┘└───────────┘    ┆    └────────────────┘
-                  ↑ Waggle Node Application Stack ↑                     ┆
-┌──────────────────────────────────────────────────────────────────┐    ┆
-│                               Docker                             │    ┆
-└──────────────────────────────────────────────────────────────────┘    ┆
-```
+<img width="800px" src="./docs/images/virtual-waggle.svg">
 
 ## Requirements
 
