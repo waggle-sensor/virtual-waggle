@@ -1,12 +1,12 @@
 # Waggle Node Application Stack
 
+_Update: We are currently working on unifying Virtual Waggle with the [Waggle Edge Stack](https://github.com/waggle-sensor/waggle-edge-stack). Our goal is to provide a common platform for both virtual and native deployments._
+
 This repo contains the software components needed to run Waggle plugins and publish data
 to a Beehive server. It is built on top of Docker which allows it to run on a variety
 of platforms.
 
-See the demo [here](https://www.youtube.com/embed/UxAklEnZgog)!
-
-_Update: We are currently working on unifying Virtual Waggle with the [Waggle Edge Stack](https://github.com/waggle-sensor/waggle-edge-stack). Our goal is to provide a common platform for both virtual and native deployments._
+[![Virtual Waggle Demo](https://img.youtube.com/vi/UxAklEnZgog/0.jpg)](https://www.youtube.com/watch?v=UxAklEnZgog)
 
 ## Architecture Overview
 
