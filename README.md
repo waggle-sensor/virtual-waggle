@@ -10,6 +10,10 @@ _Update: We are currently working on unifying Virtual Waggle with the [Waggle Ed
 
 <img width="800px" src="./docs/images/virtual-waggle.svg">
 
+## Virtual Waggle demo
+
+<iframe width="955" height="546" src="https://www.youtube.com/embed/UxAklEnZgog" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 ## Requirements
 
 * [Docker](https://docs.docker.com/install/)
