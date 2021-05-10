@@ -6,11 +6,11 @@ This repo contains the software components needed to run Waggle plugins and publ
 to a Beehive server. It is built on top of Docker which allows it to run on a variety
 of platforms.
 
-[![Virtual Waggle Demo](https://img.youtube.com/vi/UxAklEnZgog/0.jpg)](https://www.youtube.com/watch?v=UxAklEnZgog)
-
-## Architecture Overview
-
 <img width="800px" src="./docs/images/virtual-waggle.svg">
+
+## Virtual Waggle Demo
+
+[![Virtual Waggle Demo](https://img.youtube.com/vi/UxAklEnZgog/0.jpg)](https://www.youtube.com/watch?v=UxAklEnZgog)
 
 ## Requirements
 
